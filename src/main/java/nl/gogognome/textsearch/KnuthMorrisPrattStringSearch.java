@@ -1,4 +1,4 @@
-package nl.textsearch;
+package nl.gogognome.textsearch;
 
 import java.util.function.Function;
 

@@ -1,4 +1,4 @@
-package nl.textsearch;
+package nl.gogognome.textsearch;
 
 import org.junit.Test;
 
