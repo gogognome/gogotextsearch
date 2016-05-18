@@ -11,6 +11,8 @@ public class ParserTest {
         assertParse("bla", "bla");
         assertParse("(bla)", "bla");
         assertParse("a and b", "(a AND b)");
+        assertParse("a b", "(a AND b)");
+        assertParse("a b c", "((a AND b) AND c)"); // and is optional
         assertParse("a and b AnD c AND d ", "(((a AND b) AND c) AND d)");
 
         assertParse("a or b", "(a OR b)");
@@ -26,7 +28,10 @@ public class ParserTest {
         assertParseShouldFail(null, "No expression found");
         assertParseShouldFail(" ", "No expression found");
         assertParseShouldFail("a and", "Unexpected end of text");
+        assertParseShouldFail("a (", "Expected end of expression after \"a\"");
+        assertParseShouldFail("a )", "Expected end of expression after \"a\"");
         assertParseShouldFail("a or", "Unexpected end of text");
+        assertParseShouldFail("a not", "Expected end of expression after \"a\"");
         assertParseShouldFail("not", "Expected expression after \"NOT\"");
         assertParseShouldFail("(", "Expected expression after \"(\"");
         assertParseShouldFail("(a", "Expected \")\" after \"(\" and expression");
@@ -40,7 +45,7 @@ public class ParserTest {
     private void assertParseShouldFail(String text, String expectedExceptionMessage) {
         try {
             Expression expression = new Parser().parse(text);
-            fail("Expected exception was not thrown when parsing " + text);
+            fail("Expected exception was not thrown when parsing " + text + ", result is " + expression);
         } catch (IllegalArgumentException e) {
             assertEquals(expectedExceptionMessage, e.getMessage());
         }

@@ -15,7 +15,12 @@ public class Parser {
         if (currentToken == null) {
             throw new IllegalArgumentException("No expression found");
         }
-        return parseOrExpression();
+        Expression result = parseOrExpression();
+
+        if (currentToken != null) {
+            throw new IllegalArgumentException("Expected end of expression after \"" + result + '"');
+        }
+        return result;
     }
 
     private Expression parseOrExpression() {
@@ -30,8 +35,11 @@ public class Parser {
 
     private Expression parseAndExpression() {
         Expression left = parseSimpleExpression();
-        while (currentToken != null && currentToken.toLowerCase().equals("and")) {
-            nextToken(); // skip "AND"
+        while (currentToken != null && (currentToken.toLowerCase().equals("and") ||
+                (!currentToken.toLowerCase().equals("or") && !currentToken.toLowerCase().equals("not") && !currentToken.equals("(") && !currentToken.equals(")")))) {
+            if (currentToken.toLowerCase().equals("and")) {
+                nextToken(); // skip "AND"
+            }
             Expression right = parseSimpleExpression();
             left = new And(left, right);
         }
