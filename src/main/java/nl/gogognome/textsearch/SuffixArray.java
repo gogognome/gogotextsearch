@@ -22,10 +22,10 @@ public class SuffixArray {
         int w = lowerBound;
         int b = upperBound;
         if (upperBound - lowerBound > 1) {
-            int pivotIndex = (lowerBound + upperBound) / 2;
+            int pivotIndex = suffixArray[(lowerBound + upperBound) / 2];
 
             while (w != b) {
-                int signum = compare(suffixArray[w], suffixArray[pivotIndex]);
+                int signum = compare(suffixArray[w], pivotIndex);
                 if (signum < 0) {
                     swap(r, w);
                     r++;
@@ -57,7 +57,7 @@ public class SuffixArray {
             index1++;
             index2++;
         }
-        return 0;
+        return index1 - index2;
     }
 
     private void swap(int index1, int index2) {
@@ -67,7 +67,7 @@ public class SuffixArray {
     }
 
     public String toString() {
-        StringBuffer sb = new StringBuffer(1000);
+        StringBuilder sb = new StringBuilder(1000);
         for (int i = 0; i < dataString.length(); i++) {
             sb.append(dataString.substring(suffixArray[i])).append('\n');
         }
@@ -76,24 +76,32 @@ public class SuffixArray {
 
     public int indexOf(String searchString) {
         int low = 0;
-        int high = dataString.length() - 1;
-        int mid;
-        int idx;
+        int high = length;
 
-        while (low < high) {
-            mid = low + (high - low) / 2;
+        while (low + 1< high) {
+            int mid = (low + high) / 2;
 
-            idx = suffixArray[mid];
-
-            if (dataString.substring(idx).startsWith(searchString)) {
-                return idx;
-            } else if (dataString.substring(idx).compareTo(searchString) <= 0) {
-                low = mid + 1;
+            int index = suffixArray[mid];
+            int signum = compare(index, searchString);
+            if (signum == 0) {
+                return index;
+            } else if (signum < 0) {
+                low = mid;
             } else {
-                high = mid - 1;
+                high = mid;
             }
         }
-        return -1;
+        int index = suffixArray[low];
+        return compare(index, searchString) == 0 ? index : -1;
     }
 
+    private int compare(int index, String searchString) {
+        for (int offset=0; offset<searchString.length() && index + offset < length; offset++) {
+            int signum = Character.compare(dataString.charAt(index+offset), searchString.charAt(offset));
+            if (signum != 0) {
+                return signum;
+            }
+        }
+        return 0;
+    }
 }
