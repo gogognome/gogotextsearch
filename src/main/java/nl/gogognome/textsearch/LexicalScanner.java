@@ -3,7 +3,7 @@ package nl.gogognome.textsearch;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class LexicalScanner {
+class LexicalScanner {
 
     private final String text;
     private int index;

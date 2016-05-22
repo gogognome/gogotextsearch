@@ -1,6 +1,6 @@
 package nl.gogognome.textsearch;
 
-public class Not implements Expression {
+class Not implements Expression {
 
     private final Expression expression;
 
@@ -9,7 +9,13 @@ public class Not implements Expression {
     }
 
     @Override
+    public boolean matches(String text) {
+        return !expression.matches(text);
+    }
+
+    @Override
     public String toString() {
         return "NOT " + expression.toString();
     }
+
 }

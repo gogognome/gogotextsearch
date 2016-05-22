@@ -1,9 +1,8 @@
 package nl.gogognome.textsearch;
 
 import java.util.Iterator;
-import java.util.StringTokenizer;
 
-public class Parser {
+class Parser {
 
     private String currentToken;
     private Iterator<String> tokenIterator;

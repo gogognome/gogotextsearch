@@ -1,6 +1,6 @@
 package nl.gogognome.textsearch;
 
-public class And implements Expression {
+class And implements Expression {
 
     private final Expression left;
     private final Expression right;
@@ -12,7 +12,13 @@ public class And implements Expression {
     }
 
     @Override
+    public boolean matches(String text) {
+        return left.matches(text) && right.matches(text);
+    }
+
+    @Override
     public String toString() {
         return '(' + left.toString() + " AND " + right.toString() + ')';
     }
+
 }
