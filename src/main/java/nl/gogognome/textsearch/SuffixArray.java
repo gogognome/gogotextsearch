@@ -1,20 +1,21 @@
 package nl.gogognome.textsearch;
 
 public class SuffixArray {
-    private final String dataString;
+    private final String data;
+    private final int dataLength;
     private final int[] suffixArray;
-    private final int length;
+    private final boolean caseSensitive;
 
-    public SuffixArray(String data) {
-        dataString = data;
-        length = dataString.length();
-        suffixArray = new int[length];
+    public SuffixArray(String data, boolean caseSensitive) {
+        this.data = caseSensitive ? data : data.toLowerCase();
+        this.caseSensitive = caseSensitive;
+        dataLength = this.data.length();
+        suffixArray = new int[dataLength];
 
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < dataLength; i++) {
             suffixArray[i] = i;
         }
-
-        quicksort(0, length);
+        quicksort(0, dataLength);
     }
 
     private void quicksort(int lowerBound, int upperBound) {
@@ -47,9 +48,9 @@ public class SuffixArray {
         if (index1 == index2) {
             return 0;
         }
-        while (index1 < length && index2 < length) {
-            char c1 = dataString.charAt(index1);
-            char c2 = dataString.charAt(index2);
+        while (index1 < dataLength && index2 < dataLength) {
+            char c1 = data.charAt(index1);
+            char c2 = data.charAt(index2);
             int signum = c1 - c2;
             if (signum != 0) {
                 return signum;
@@ -68,15 +69,25 @@ public class SuffixArray {
 
     public String toString() {
         StringBuilder sb = new StringBuilder(1000);
-        for (int i = 0; i < dataString.length(); i++) {
-            sb.append(dataString.substring(suffixArray[i])).append('\n');
+        for (int i = 0; i < data.length(); i++) {
+            sb.append(data.substring(suffixArray[i])).append('\n');
         }
         return sb.toString();
     }
 
     public int indexOf(String searchString) {
+        if (searchString.length() > dataLength) {
+            return -1;
+        }
+        if (searchString.isEmpty()) {
+            return 0;
+        }
+        if (!caseSensitive) {
+            searchString = searchString.toLowerCase();
+        }
+
         int low = 0;
-        int high = length;
+        int high = dataLength;
 
         while (low + 1< high) {
             int mid = (low + high) / 2;
@@ -92,12 +103,15 @@ public class SuffixArray {
             }
         }
         int index = suffixArray[low];
-        return compare(index, searchString) == 0 ? index : -1;
+        if (index + searchString.length() <= dataLength && compare(index, searchString) == 0) {
+            return index;
+        }
+        return -1;
     }
 
     private int compare(int index, String searchString) {
-        for (int offset=0; offset<searchString.length() && index + offset < length; offset++) {
-            int signum = Character.compare(dataString.charAt(index+offset), searchString.charAt(offset));
+        for (int offset = 0; offset<searchString.length() && index + offset < dataLength; offset++) {
+            int signum = Character.compare(data.charAt(index+offset), searchString.charAt(offset));
             if (signum != 0) {
                 return signum;
             }
