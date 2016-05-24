@@ -2,7 +2,7 @@ package nl.gogognome.textsearch.criteria;
 
 import nl.gogognome.textsearch.CaseInsensitiveStringSearch;
 
-class StringLiteral implements Expression {
+public class StringLiteral implements Criterion {
 
     private final static CaseInsensitiveStringSearch CASE_INSENSITIVE_STRING_SEARCH = new CaseInsensitiveStringSearch();
     private final String literal;
@@ -11,9 +11,8 @@ class StringLiteral implements Expression {
         this.literal = literal;
     }
 
-    @Override
-    public boolean matches(String text) {
-        return CASE_INSENSITIVE_STRING_SEARCH.indexOfIgnoreCase(text, literal) != -1;
+    public String getLiteral() {
+        return literal;
     }
 
     @Override

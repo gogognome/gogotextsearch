@@ -1,31 +1,28 @@
 package nl.gogognome.textsearch.criteria;
 
-import nl.gogognome.textsearch.criteria.Expression;
-import nl.gogognome.textsearch.criteria.Or;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyString;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class OrTest {
 
-    private final Expression left = mock(Expression.class);
-    private final Expression right = mock(Expression.class);
+    private final Criterion left = mock(Criterion.class);
+    private final Criterion right = mock(Criterion.class);
     private final Or or = new Or(left, right);
 
     @Test
-    public void testMatches() {
-        assertOrMatches(false, false, false);
-        assertOrMatches(true, false, true);
-        assertOrMatches(false, true, true);
-        assertOrMatches(true, true, true);
+    public void testGetters() {
+        assertSame(left, or.getLeft());
+        assertSame(right, or.getRight());
     }
 
-    private void assertOrMatches(boolean leftMatches, boolean rightMatches, boolean expectedOrMatches) {
-        when(left.matches(anyString())).thenReturn(leftMatches);
-        when(right.matches(anyString())).thenReturn(rightMatches);
-        assertEquals(expectedOrMatches, or.matches("bla"));
+    @Test
+    public void testToString() {
+        when(left.toString()).thenReturn("left");
+        when(right.toString()).thenReturn("right");
+        assertEquals("(left OR right)", or.toString());
     }
 }

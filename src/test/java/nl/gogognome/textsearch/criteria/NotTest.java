@@ -1,27 +1,25 @@
 package nl.gogognome.textsearch.criteria;
 
-import nl.gogognome.textsearch.criteria.Expression;
-import nl.gogognome.textsearch.criteria.Not;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyString;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class NotTest {
 
-    private final Expression otherExpression = mock(Expression.class);
-    private final Not not = new Not(otherExpression);
+    private final Criterion otherCriterion = mock(Criterion.class);
+    private final Not not = new Not(otherCriterion);
 
     @Test
-    public void testMatches() {
-        assertNotMatches(false, true);
-        assertNotMatches(true, false);
+    public void testGetters() {
+        assertSame(otherCriterion, not.getCriterion());
     }
 
-    private void assertNotMatches(boolean otherExpressionMatches, boolean expectedOrMatches) {
-        when(otherExpression.matches(anyString())).thenReturn(otherExpressionMatches);
-        assertEquals(expectedOrMatches, not.matches("bla"));
+    @Test
+    public void testToString() {
+        when(otherCriterion.toString()).thenReturn("other");
+        assertEquals("NOT other", not.toString());
     }
 }

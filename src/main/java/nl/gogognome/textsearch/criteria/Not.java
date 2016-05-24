@@ -1,21 +1,20 @@
 package nl.gogognome.textsearch.criteria;
 
-class Not implements Expression {
+public class Not implements Criterion {
 
-    private final Expression expression;
+    private final Criterion criterion;
 
-    public Not(Expression expression) {
-        this.expression = expression;
+    public Not(Criterion criterion) {
+        this.criterion = criterion;
     }
 
-    @Override
-    public boolean matches(String text) {
-        return !expression.matches(text);
+    public Criterion getCriterion() {
+        return criterion;
     }
 
     @Override
     public String toString() {
-        return "NOT " + expression.toString();
+        return "NOT " + criterion.toString();
     }
 
 }

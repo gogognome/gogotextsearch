@@ -1,19 +1,22 @@
 package nl.gogognome.textsearch.criteria;
 
-class Or implements Expression {
+public class Or implements Criterion {
 
-    private final Expression left;
-    private final Expression right;
+    private final Criterion left;
+    private final Criterion right;
 
 
-    public Or(Expression left, Expression right) {
+    public Or(Criterion left, Criterion right) {
         this.left = left;
         this.right = right;
     }
 
-    @Override
-    public boolean matches(String text) {
-        return left.matches(text) || right.matches(text);
+    public Criterion getLeft() {
+        return left;
+    }
+
+    public Criterion getRight() {
+        return right;
     }
 
     @Override

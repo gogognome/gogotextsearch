@@ -1,7 +1,5 @@
 package nl.gogognome.textsearch.criteria;
 
-import nl.gogognome.textsearch.criteria.Expression;
-import nl.gogognome.textsearch.criteria.Parser;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -27,27 +25,27 @@ public class ParserTest {
 
         assertParse("a and (b or c) or (not d and e) ", "((a AND (b OR c)) OR NOT (d AND e))");
 
-        assertParseShouldFail(null, "No expression found");
-        assertParseShouldFail(" ", "No expression found");
+        assertParseShouldFail(null, "No criterion found");
+        assertParseShouldFail(" ", "No criterion found");
         assertParseShouldFail("a and", "Unexpected end of text");
-        assertParseShouldFail("a (", "Expected end of expression after \"a\"");
-        assertParseShouldFail("a )", "Expected end of expression after \"a\"");
+        assertParseShouldFail("a (", "Expected end of criterion after \"a\"");
+        assertParseShouldFail("a )", "Expected end of criterion after \"a\"");
         assertParseShouldFail("a or", "Unexpected end of text");
-        assertParseShouldFail("a not", "Expected end of expression after \"a\"");
-        assertParseShouldFail("not", "Expected expression after \"NOT\"");
-        assertParseShouldFail("(", "Expected expression after \"(\"");
-        assertParseShouldFail("(a", "Expected \")\" after \"(\" and expression");
+        assertParseShouldFail("a not", "Expected end of criterion after \"a\"");
+        assertParseShouldFail("not", "Expected criterion after \"NOT\"");
+        assertParseShouldFail("(", "Expected criterion after \"(\"");
+        assertParseShouldFail("(a", "Expected \")\" after \"(\" and criterion");
     }
 
     private void assertParse(String text, String parsedText) {
-        Expression expression = new Parser().parse(text);
-        assertEquals(parsedText, expression.toString());
+        Criterion criterion = new Parser().parse(text);
+        assertEquals(parsedText, criterion.toString());
     }
 
     private void assertParseShouldFail(String text, String expectedExceptionMessage) {
         try {
-            Expression expression = new Parser().parse(text);
-            fail("Expected exception was not thrown when parsing " + text + ", result is " + expression);
+            Criterion criterion = new Parser().parse(text);
+            fail("Expected exception was not thrown when parsing " + text + ", result is " + criterion);
         } catch (IllegalArgumentException e) {
             assertEquals(expectedExceptionMessage, e.getMessage());
         }

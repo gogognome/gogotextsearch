@@ -1,10 +1,10 @@
 package nl.gogognome.textsearch.textfile;
 
-import nl.gogognome.textsearch.criteria.Expression;
+import nl.gogognome.textsearch.criteria.Criterion;
 
 import java.util.Iterator;
 
 public interface TextFileSearch {
 
-    Iterator<String> matchesIterator(Expression expression);
+    Iterator<String> matchesIterator(Criterion criterion);
 }

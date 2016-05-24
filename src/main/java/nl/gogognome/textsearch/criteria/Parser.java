@@ -7,67 +7,67 @@ class Parser {
     private String currentToken;
     private Iterator<String> tokenIterator;
 
-    public Expression parse(String text) {
+    public Criterion parse(String text) {
         tokenIterator = new LexicalScanner(text).scan().iterator();
         nextToken();
 
         if (currentToken == null) {
-            throw new IllegalArgumentException("No expression found");
+            throw new IllegalArgumentException("No criterion found");
         }
-        Expression result = parseOrExpression();
+        Criterion result = parseOrCriterion();
 
         if (currentToken != null) {
-            throw new IllegalArgumentException("Expected end of expression after \"" + result + '"');
+            throw new IllegalArgumentException("Expected end of criterion after \"" + result + '"');
         }
         return result;
     }
 
-    private Expression parseOrExpression() {
-        Expression left = parseAndExpression();
+    private Criterion parseOrCriterion() {
+        Criterion left = parseAndCriterion();
         while (currentToken != null && currentToken.toLowerCase().equals("or")) {
             nextToken(); // skip "OR"
-            Expression right = parseAndExpression();
+            Criterion right = parseAndCriterion();
             left = new Or(left, right);
         }
         return left;
     }
 
-    private Expression parseAndExpression() {
-        Expression left = parseSimpleExpression();
+    private Criterion parseAndCriterion() {
+        Criterion left = parseSimpleCriterion();
         while (currentToken != null && (currentToken.toLowerCase().equals("and") ||
                 (!currentToken.toLowerCase().equals("or") && !currentToken.toLowerCase().equals("not") && !currentToken.equals("(") && !currentToken.equals(")")))) {
             if (currentToken.toLowerCase().equals("and")) {
                 nextToken(); // skip "AND"
             }
-            Expression right = parseSimpleExpression();
+            Criterion right = parseSimpleCriterion();
             left = new And(left, right);
         }
         return left;
     }
 
-    private Expression parseSimpleExpression() {
+    private Criterion parseSimpleCriterion() {
         if (currentToken == null) {
             throw new IllegalArgumentException("Unexpected end of text");
         }
         if (currentToken.toLowerCase().equals("not")) {
             nextToken(); // skip "NOT"
             if (currentToken == null) {
-                throw new IllegalArgumentException("Expected expression after \"NOT\"");
+                throw new IllegalArgumentException("Expected criterion after \"NOT\"");
             }
-            return new Not(parseOrExpression());
+            return new Not(parseOrCriterion());
         } else if (currentToken.equals("(")) {
             nextToken(); // skip "("
             if (currentToken == null) {
-                throw new IllegalArgumentException("Expected expression after \"(\"");
+                throw new IllegalArgumentException("Expected criterion after \"(\"");
             }
-            Expression expression = parseOrExpression();
+            Criterion criterion = parseOrCriterion();
             if (currentToken == null) {
-                throw new IllegalArgumentException("Expected \")\" after \"(\" and expression");
+                throw new IllegalArgumentException("Expected \")\" after \"(\" and criterion");
             }
             nextToken(); // skip ")"
-            return expression;
+            return criterion;
         }
-        Expression literal = new StringLiteral(currentToken);
+        Criterion literal = new StringLiteral(currentToken);
         nextToken();
         return literal;
     }
