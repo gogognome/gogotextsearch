@@ -1,4 +1,6 @@
-package nl.gogognome.textsearch;
+package nl.gogognome.textsearch.criteria;
+
+import nl.gogognome.textsearch.CaseInsensitiveStringSearch;
 
 class StringLiteral implements Expression {
 

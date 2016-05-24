@@ -1,5 +1,7 @@
-package nl.gogognome.textsearch;
+package nl.gogognome.textsearch.criteria;
 
+import nl.gogognome.textsearch.criteria.Expression;
+import nl.gogognome.textsearch.criteria.Or;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

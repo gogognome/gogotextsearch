@@ -1,4 +1,4 @@
-package nl.gogognome.textsearch;
+package nl.gogognome.textsearch.criteria;
 
 class Or implements Expression {
 

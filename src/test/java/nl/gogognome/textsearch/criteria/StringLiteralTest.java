@@ -1,5 +1,6 @@
-package nl.gogognome.textsearch;
+package nl.gogognome.textsearch.criteria;
 
+import nl.gogognome.textsearch.criteria.StringLiteral;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

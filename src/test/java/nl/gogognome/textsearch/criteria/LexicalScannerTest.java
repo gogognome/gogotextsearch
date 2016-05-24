@@ -1,5 +1,6 @@
-package nl.gogognome.textsearch;
+package nl.gogognome.textsearch.criteria;
 
+import nl.gogognome.textsearch.criteria.LexicalScanner;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -22,6 +23,6 @@ public class LexicalScannerTest {
 
     private void assertScanReturnsTokens(String text, String... expectedTokens) {
         Collection<String> tokens = new LexicalScanner(text).scan();
-        assertEquals(Arrays.asList(expectedTokens), new ArrayList<String>(tokens));
+        assertEquals(Arrays.asList(expectedTokens), new ArrayList<>(tokens));
     }
 }
