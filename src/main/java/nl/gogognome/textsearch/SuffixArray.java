@@ -1,5 +1,9 @@
 package nl.gogognome.textsearch;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class SuffixArray {
     private final String data;
     private final int dataLength;
@@ -76,16 +80,42 @@ public class SuffixArray {
     }
 
     public int indexOf(String searchString) {
+        List<Integer> indexes = indexesOf(searchString);
+        return indexes.isEmpty() ? -1 : indexes.get(0);
+    }
+
+    public List<Integer> indexesOf(String searchString) {
+        validateSearchString(searchString);
+
         if (searchString.length() > dataLength) {
-            return -1;
+            return Collections.emptyList();
         }
-        if (searchString.isEmpty()) {
-            return 0;
-        }
+
         if (!caseSensitive) {
             searchString = searchString.toLowerCase();
         }
 
+        List<Integer> indexes = new ArrayList<>();
+        int suffixArrayIndex = findFirstMatch(searchString);
+        while (suffixArrayIndex >= 0 && matchesAtSuffixArrayIndex(searchString, suffixArray[suffixArrayIndex])) {
+            indexes.add(suffixArray[suffixArrayIndex]);
+            suffixArrayIndex--;
+        }
+        Collections.sort(indexes);
+        return indexes;
+    }
+
+    private void validateSearchString(String searchString) {
+        if (searchString == null || searchString.isEmpty()) {
+            throw new IllegalArgumentException("The search string must not a non eempty string");
+        }
+    }
+
+    private boolean matchesAtSuffixArrayIndex(String searchString, int textIndex) {
+        return textIndex + searchString.length() <= dataLength && compare(textIndex, searchString) == 0;
+    }
+
+    private int findFirstMatch(String searchString) {
         int low = 0;
         int high = dataLength;
 
@@ -94,19 +124,13 @@ public class SuffixArray {
 
             int index = suffixArray[mid];
             int signum = compare(index, searchString);
-            if (signum == 0) {
-                return index;
-            } else if (signum < 0) {
+            if (signum <= 0) {
                 low = mid;
             } else {
                 high = mid;
             }
         }
-        int index = suffixArray[low];
-        if (index + searchString.length() <= dataLength && compare(index, searchString) == 0) {
-            return index;
-        }
-        return -1;
+        return low;
     }
 
     private int compare(int index, String searchString) {
