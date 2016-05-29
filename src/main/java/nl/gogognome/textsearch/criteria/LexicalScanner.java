@@ -20,6 +20,18 @@ class LexicalScanner {
                 if (isOperator()) {
                     tokens.add(text.substring(index, index + 1));
                     index++;
+                } else if (isQuote(text.charAt(index))) {
+                   char quoteChar =  text.charAt(index);
+                    index++;
+                    int startIndex = index;
+                    while (index < text.length() && text.charAt(index) != quoteChar) {
+                        index++;
+                    }
+                    if (index == text.length()) {
+                        throw new IllegalArgumentException("String literal starting at index " + (startIndex-1) + " was not terminated with a " + quoteChar + " character");
+                    }
+                    tokens.add(text.substring(startIndex, index));
+                    index++; // skip closing quote
                 } else {
                     int startIndex = index;
                     index++;
@@ -35,6 +47,10 @@ class LexicalScanner {
 
     private boolean isOperator() {
         return "()".indexOf(text.charAt(index)) != -1;
+    }
+
+    private boolean isQuote(char c) {
+        return "'\"".indexOf(text.charAt(index)) != -1;
     }
 
     private void skipWhiteSpaces() {
