@@ -1,8 +1,8 @@
 package nl.gogognome.textsearch.textfile;
 
-import java.util.Comparator;
+class Range implements Comparable<Range> {
 
-public class Range implements Comparable<Range> {
+    private final static Range EMPTY = new Range(0, 0);
 
     private final int start;
     private final int end;
@@ -28,7 +28,17 @@ public class Range implements Comparable<Range> {
     }
 
     public boolean intersects(Range that) {
-        return !this.isEmpty() && !that.isEmpty() && this.start < that.end && that.start < this.end;
+        return this.start < that.end && that.start < this.end;
+    }
+
+    public Range intersection(Range that) {
+        if (intersects(that)) {
+            if (this.equals(that)) {
+                return this;
+            }
+            return new Range(Math.max(this.start, that.start), Math.min(this.end, that.end));
+        }
+        return EMPTY;
     }
 
     @Override

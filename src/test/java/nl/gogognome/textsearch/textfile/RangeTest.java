@@ -24,6 +24,14 @@ public class RangeTest {
     }
 
     @Test
+    public void testGetters() {
+        assertEquals(0, range0_5.getStart());
+        assertEquals(3, range3_3.getStart());
+        assertEquals(5, range0_5.getEnd());
+        assertEquals(3, range3_3.getEnd());
+    }
+
+    @Test
     public void testEquals() {
         assertEquals(range0_5, range0_5);
         assertEquals(range0_5, new Range(0, 5));
@@ -33,6 +41,7 @@ public class RangeTest {
         assertFalse(range0_5.equals(new Range(0, 4)));
         assertFalse(range0_5.equals(new Range(1, 5)));
         assertFalse(range0_5.equals(new Range(-1, 5)));
+        assertFalse(range0_5.equals(new Object()));
     }
 
     @Test
@@ -73,7 +82,17 @@ public class RangeTest {
         assertTrue(range0_5.intersects(range4_8));
         assertFalse(range0_5.intersects(range5_9));
         assertFalse(range3_3.intersects(range3_3));
-        assertFalse(range3_3.intersects(range0_5));
-        assertFalse(range0_5.intersects(range3_3));
+        assertTrue(range3_3.intersects(range0_5));
+        assertTrue(range0_5.intersects(range3_3));
+    }
+
+    @Test
+    public void testIntersection() {
+        assertEquals(range0_5, range0_5.intersection(range0_5));
+        assertEquals(new Range(3, 5), range0_5.intersection(range3_7));
+        assertEquals(new Range(3, 5), range3_7.intersection(range0_5));
+        assertTrue(range0_5.intersection(range5_9).isEmpty());
+        assertTrue(range0_5.intersection(range3_3).isEmpty());
+        assertTrue(range3_3.intersection(range0_5).isEmpty());
     }
 }
