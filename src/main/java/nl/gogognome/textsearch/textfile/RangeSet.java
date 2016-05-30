@@ -29,6 +29,14 @@ class RangeSet implements Iterable<Range> {
         return this;
     }
 
+    private void joinWithNext(int index) {
+        Range range1 = ranges.get(index);
+        Range range2 = ranges.get(index + 1);
+        Range union = new Range(Math.min(range1.getStart(), range2.getStart()), Math.max(range1.getEnd(), range2.getEnd()));
+        ranges.set(index, union);
+        ranges.remove(index+1);
+    }
+
     public RangeSet add(RangeSet rangeSet) {
         for (Range range : rangeSet) {
            add(range);
@@ -61,18 +69,17 @@ class RangeSet implements Iterable<Range> {
         return this;
     }
 
+    public RangeSet remove(RangeSet rangeSet) {
+        for (Range range : rangeSet) {
+            remove(range);
+        }
+        return this;
+    }
+
     private boolean canBeJoinedWithNext(int index) {
         Range range = ranges.get(index);
         Range nextRange = ranges.get(index + 1);
         return range.intersects(nextRange) || range.getEnd() == nextRange.getStart();
-    }
-
-    private void joinWithNext(int index) {
-        Range range1 = ranges.get(index);
-        Range range2 = ranges.get(index + 1);
-        Range union = new Range(Math.min(range1.getStart(), range2.getStart()), Math.max(range1.getEnd(), range2.getEnd()));
-        ranges.set(index, union);
-        ranges.remove(index+1);
     }
 
     private int getInsertionIndex(Range range) {
@@ -81,6 +88,10 @@ class RangeSet implements Iterable<Range> {
             index = -(index + 1);
         }
         return index;
+    }
+
+    public void retain(RangeSet rangeSet) {
+
     }
 
     @Override

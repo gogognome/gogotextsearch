@@ -142,4 +142,27 @@ public class SuffixArray {
         }
         return 0;
     }
+
+    public int getStartOfLine(int index) {
+        while (index > 0 && !isNewLine(index-1)) {
+            index--;
+        }
+        return index;
+    }
+
+    public int getEndOfLine(int index) {
+        while (index+1 < dataLength && !isNewLine(index+1)) {
+            index++;
+        }
+        return index+1;
+    }
+
+    private boolean isNewLine(int index) {
+        char c = data.charAt(index);
+        return c == '\n' || c == '\r';
+    }
+
+    public String substring(int start, int end) {
+        return data.substring(start, end);
+    }
 }

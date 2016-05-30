@@ -113,4 +113,31 @@ public class SuffixArrayTest {
         return new SuffixArray(data, false).indexOf(textToFind);
     }
 
+    @Test
+    public void testStartOfLine() {
+        SuffixArray suffixArray = new SuffixArray("bla\n\rdie\n\rbla", false);
+        assertEquals(0, suffixArray.getStartOfLine(0));
+        assertEquals(0, suffixArray.getStartOfLine(1));
+        assertEquals(0, suffixArray.getStartOfLine(2));
+        assertEquals(5, suffixArray.getStartOfLine(5));
+        assertEquals(5, suffixArray.getStartOfLine(6));
+        assertEquals(5, suffixArray.getStartOfLine(7));
+        assertEquals(10, suffixArray.getStartOfLine(10));
+        assertEquals(10, suffixArray.getStartOfLine(11));
+        assertEquals(10, suffixArray.getStartOfLine(12));
+    }
+
+    @Test
+    public void testEndOfLine() {
+        SuffixArray suffixArray = new SuffixArray("bla\n\rdie\n\rbla", false);
+        assertEquals(3, suffixArray.getEndOfLine(0));
+        assertEquals(3, suffixArray.getEndOfLine(1));
+        assertEquals(3, suffixArray.getEndOfLine(2));
+        assertEquals(8, suffixArray.getEndOfLine(5));
+        assertEquals(8, suffixArray.getEndOfLine(6));
+        assertEquals(8, suffixArray.getEndOfLine(7));
+        assertEquals(13, suffixArray.getEndOfLine(10));
+        assertEquals(13, suffixArray.getEndOfLine(11));
+        assertEquals(13, suffixArray.getEndOfLine(12));
+    }
 }
