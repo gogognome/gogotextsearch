@@ -41,6 +41,10 @@ class Range implements Comparable<Range> {
         return EMPTY;
     }
 
+    public boolean contains(Range that) {
+        return this.getStart() <= that.getStart() && this.getEnd() >= that.getEnd();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Range) {
@@ -57,7 +61,8 @@ class Range implements Comparable<Range> {
 
     @Override
     public int compareTo(Range that) {
-        return this.start - that.start;
+        int signum = this.start - that.start;
+        return signum != 0 ? signum : this.end - that.end;
     }
 
     @Override

@@ -66,7 +66,8 @@ public class RangeTest {
         assertTrue(range3_3.compareTo(range0_5) > 0);
         assertTrue(range3_3.compareTo(new Range(2, 3)) > 0);
         assertTrue(range3_3.compareTo(range3_3) == 0);
-        assertTrue(range3_3.compareTo(new Range(3, 6)) == 0);
+        assertTrue(range0_5.compareTo(new Range(0, 4)) > 0);
+        assertTrue(range0_5.compareTo(new Range(0, 6)) < 0);
     }
 
     @Test
@@ -84,6 +85,17 @@ public class RangeTest {
         assertFalse(range3_3.intersects(range3_3));
         assertTrue(range3_3.intersects(range0_5));
         assertTrue(range0_5.intersects(range3_3));
+    }
+
+    @Test
+    public void testContains() {
+        assertTrue(range0_5.contains(range0_5));
+        assertTrue(range0_5.contains(new Range(0, 4)));
+        assertTrue(range0_5.contains(new Range(1, 5)));
+        assertTrue(range0_5.contains(new Range(1, 4)));
+        assertFalse(range0_5.contains(range5_9));
+        assertFalse(range3_3.contains(range3_7));
+        assertFalse(range3_3.contains(range0_5));
     }
 
     @Test
