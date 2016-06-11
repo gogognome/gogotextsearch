@@ -5,7 +5,6 @@ public class Or implements Criterion {
     private final Criterion left;
     private final Criterion right;
 
-
     public Or(Criterion left, Criterion right) {
         this.left = left;
         this.right = right;

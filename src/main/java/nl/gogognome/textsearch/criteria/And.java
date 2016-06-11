@@ -5,7 +5,6 @@ public class And implements Criterion {
     private final Criterion left;
     private final Criterion right;
 
-
     public And(Criterion left, Criterion right) {
         this.left = left;
         this.right = right;
