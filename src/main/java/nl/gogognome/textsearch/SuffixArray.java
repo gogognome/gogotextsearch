@@ -72,7 +72,11 @@ public class SuffixArray {
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder(1000);
+        // length of constructed string is 2 + 3 + 4 + ... + (dataLength + 1)
+        // 1 + 2 + ... + n = (n+1) * n / 2 is a well-known equation
+        // Substitute n by dataLength + 1 and you get the length plus 1 (because the sum starts with 2 instead of 1)
+        int stringLength = (dataLength + 2) * (dataLength + 1) / 2 - 1;
+        StringBuilder sb = new StringBuilder(stringLength);
         for (int i = 0; i < data.length(); i++) {
             sb.append(data.substring(suffixArray[i])).append('\n');
         }

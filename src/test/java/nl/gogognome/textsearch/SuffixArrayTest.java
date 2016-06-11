@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class SuffixArrayTest {
 
@@ -139,5 +139,50 @@ public class SuffixArrayTest {
         assertEquals(13, suffixArray.getEndOfLine(10));
         assertEquals(13, suffixArray.getEndOfLine(11));
         assertEquals(13, suffixArray.getEndOfLine(12));
+    }
+
+    @Test
+    public void testToString() {
+        assertEquals("", new SuffixArray("", false).toString());
+
+        assertEquals("a\n", new SuffixArray("a", false).toString());
+
+        assertEquals(
+                "ab\n" +
+                "b\n",
+                new SuffixArray("ab", false).toString());
+
+        assertEquals(
+                "anananas\n" +
+                "ananas\n" +
+                "anas\n" +
+                "as\n" +
+                "banananas\n" +
+                "nananas\n" +
+                "nanas\n" +
+                "nas\n" +
+                "s\n",
+                new SuffixArray("banananas", false).toString());
+    }
+
+    @Test
+    public void testSubstring() {
+        assertEquals("cd", new SuffixArray("abcde", false).substring(2, 4));
+        assertEquals("abcde", new SuffixArray("abcde", true).substring(0, 5));
+
+        assertSubstringShouldFail("abcde", 3, 2);
+        assertSubstringShouldFail("abcde", -1, 2);
+        assertSubstringShouldFail("abcde", 0, 6);
+    }
+
+    private void assertSubstringShouldFail(String data, int startIndex, int endIndex) {
+        SuffixArray suffixArray = new SuffixArray(data, false);
+        try {
+            suffixArray.substring(startIndex, endIndex);
+            fail("Expected exception was not thrown!");
+        } catch (Exception e) {
+            assertTrue("Expected IndexOutOfBOundsException (or subclass) but found " + e.getClass(),
+                    e instanceof IndexOutOfBoundsException);
+        }
     }
 }
