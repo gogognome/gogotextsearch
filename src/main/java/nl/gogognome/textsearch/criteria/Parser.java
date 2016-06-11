@@ -2,7 +2,7 @@ package nl.gogognome.textsearch.criteria;
 
 import java.util.Iterator;
 
-class Parser {
+public class Parser {
 
     private String currentToken;
     private Iterator<String> tokenIterator;
