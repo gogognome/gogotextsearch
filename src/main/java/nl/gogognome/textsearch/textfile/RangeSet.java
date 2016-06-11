@@ -90,8 +90,48 @@ class RangeSet implements Iterable<Range> {
         return index;
     }
 
-    public void retain(RangeSet rangeSet) {
+    public RangeSet retain(RangeSet rangeSet) {
+        List<Range> ranges1 = new ArrayList<>(this.ranges);
+        List<Range> ranges2 = rangeSet.ranges;
+        int i1 = 0;
+        int i2 = 0;
+        ranges.clear();
 
+        // invariant: ranges contains the intersection of ranges1[0..i1) and ranges2[0..i2)
+        // bound: ranges1.size() + ranges2.size() - i1 - i2 >= 0
+        while (i1 < ranges1.size() && i2 < ranges2.size()) {
+            Range range1 = ranges1.get(i1);
+            Range range2 = ranges2.get(i2);
+            Range intersection = range1.intersection(range2);
+            if (!intersection.isEmpty()) {
+                ranges.add(intersection);
+                if (range1.getEnd() < range2.getEnd()) {
+                    i1++;
+                } else {
+                    i2++;
+                }
+            } else if (range1.getEnd() <= range2.getStart()) {
+                i1++;
+            } else  {
+                i2++;
+            }
+        }
+
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof RangeSet) {
+            RangeSet that = (RangeSet) obj;
+            return this.ranges.equals(that.ranges);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return ranges.hashCode();
     }
 
     @Override
