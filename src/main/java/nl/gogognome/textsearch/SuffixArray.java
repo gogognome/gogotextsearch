@@ -11,7 +11,7 @@ public class SuffixArray {
     private final boolean caseSensitive;
 
     public SuffixArray(String data, boolean caseSensitive) {
-        this.data = caseSensitive ? data : data.toLowerCase();
+        this.data = data;
         this.caseSensitive = caseSensitive;
         dataLength = this.data.length();
         suffixArray = new int[dataLength];
@@ -55,6 +55,10 @@ public class SuffixArray {
         while (index1 < dataLength && index2 < dataLength) {
             char c1 = data.charAt(index1);
             char c2 = data.charAt(index2);
+            if (!caseSensitive) {
+                c1 = Character.toLowerCase(c1);
+                c2 = Character.toLowerCase(c2);
+            }
             int signum = c1 - c2;
             if (signum != 0) {
                 return signum;
@@ -93,10 +97,6 @@ public class SuffixArray {
 
         if (searchString.length() > dataLength) {
             return Collections.emptyList();
-        }
-
-        if (!caseSensitive) {
-            searchString = searchString.toLowerCase();
         }
 
         List<Integer> indexes = new ArrayList<>();
@@ -139,7 +139,13 @@ public class SuffixArray {
 
     private int compare(int index, String searchString) {
         for (int offset = 0; offset<searchString.length() && index + offset < dataLength; offset++) {
-            int signum = Character.compare(data.charAt(index+offset), searchString.charAt(offset));
+            char c1 = data.charAt(index + offset);
+            char c2 = searchString.charAt(offset);
+            if (!caseSensitive) {
+                c1 = Character.toLowerCase(c1);
+                c2 = Character.toLowerCase(c2);
+            }
+            int signum = Character.compare(c1, c2);
             if (signum != 0) {
                 return signum;
             }
@@ -161,7 +167,7 @@ public class SuffixArray {
         return index+1;
     }
 
-    private boolean isNewLine(int index) {
+    public boolean isNewLine(int index) {
         char c = data.charAt(index);
         return c == '\n' || c == '\r';
     }

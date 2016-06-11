@@ -169,6 +169,7 @@ public class SuffixArrayTest {
     public void testSubstring() {
         assertEquals("cd", new SuffixArray("abcde", false).substring(2, 4));
         assertEquals("abcde", new SuffixArray("abcde", true).substring(0, 5));
+        assertEquals("ABCDE", new SuffixArray("ABCDE", true).substring(0, 5));
 
         assertSubstringShouldFail("abcde", 3, 2);
         assertSubstringShouldFail("abcde", -1, 2);
