@@ -3,8 +3,11 @@ package nl.gogognome.textsearch.textfile;
 import nl.gogognome.textsearch.criteria.Criterion;
 import nl.gogognome.textsearch.string.StringSearch;
 import org.junit.Test;
+import org.omg.SendingContext.RunTime;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 
@@ -50,6 +53,24 @@ public class OneOffTextFileSearchTest {
         assertEquals("two", iterator.next());
         assertFalse(iterator.hasNext());
         verify(stringSearch, times(2)).matches(anyString(), any(Criterion.class));
+    }
+
+    @Test
+    public void testExceptionHandling() throws IOException {
+        InputStream inputStream = mock(InputStream.class);
+        when(inputStream.read()).thenThrow(new IOException("Test exception"));
+        when(inputStream.read(anyObject())).thenThrow(new IOException("Test exception"));
+        when(inputStream.read(anyObject(), anyInt(), anyInt())).thenThrow(new IOException("Test exception"));
+
+        OneOffTextFileSearch oneOffTextFileSearch = new OneOffTextFileSearch(inputStream, stringSearch);
+
+        try {
+            oneOffTextFileSearch.matchesIterator(someCriterion);
+            fail("Expected exception was not thrown");
+        } catch (RuntimeException e) {
+            assertEquals("A problem ocurred while reading the next line from the file", e.getMessage());
+            assertEquals(IOException.class, e.getCause().getClass());
+        }
     }
 
     private OneOffTextFileSearch buildOneOffTextFileSearch(String text) {
