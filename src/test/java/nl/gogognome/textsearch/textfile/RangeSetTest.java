@@ -89,6 +89,13 @@ public class RangeSetTest {
         assertTrue(r2_5.hashCode() != r2_5__7_10.hashCode());
     }
 
+    @Test
+    public void testToString() {
+        assertEquals("{  }", rangeSetOf().toString());
+        assertEquals("{ [2,5) }", rangeSetOf(2,5).toString());
+        assertEquals("{ [2,5), [7,8) }", rangeSetOf(2,5, 7,8).toString());
+    }
+
     private RangeSet rangeSetOf(int... startEndIndices) {
         RangeSet rangeSet = new RangeSet();
         for (int i=0; i<startEndIndices.length; i+=2) {
