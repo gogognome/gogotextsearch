@@ -1,6 +1,5 @@
 package nl.gogognome.textsearch.string;
 
-import nl.gogognome.textsearch.CaseInsensitiveStringSearch;
 import nl.gogognome.textsearch.criteria.*;
 
 public class StringSearch {

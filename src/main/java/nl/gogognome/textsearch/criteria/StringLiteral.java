@@ -1,6 +1,6 @@
 package nl.gogognome.textsearch.criteria;
 
-import nl.gogognome.textsearch.CaseInsensitiveStringSearch;
+import nl.gogognome.textsearch.string.CaseInsensitiveStringSearch;
 
 public class StringLiteral implements Criterion {
 

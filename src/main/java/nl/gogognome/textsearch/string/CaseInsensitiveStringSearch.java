@@ -1,4 +1,4 @@
-package nl.gogognome.textsearch;
+package nl.gogognome.textsearch.string;
 
 // Code from http://stackoverflow.com/questions/1126227/indexof-case-sensitive
 public class CaseInsensitiveStringSearch {

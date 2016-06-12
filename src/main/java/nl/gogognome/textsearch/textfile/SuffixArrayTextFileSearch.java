@@ -1,6 +1,6 @@
 package nl.gogognome.textsearch.textfile;
 
-import nl.gogognome.textsearch.SuffixArray;
+import nl.gogognome.textsearch.string.SuffixArray;
 import nl.gogognome.textsearch.criteria.*;
 
 import java.util.Iterator;

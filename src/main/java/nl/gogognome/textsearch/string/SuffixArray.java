@@ -1,4 +1,4 @@
-package nl.gogognome.textsearch;
+package nl.gogognome.textsearch.string;
 
 import java.util.ArrayList;
 import java.util.Collections;

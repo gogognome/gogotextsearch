@@ -1,5 +1,6 @@
-package nl.gogognome.textsearch;
+package nl.gogognome.textsearch.string;
 
+import nl.gogognome.textsearch.string.CaseInsensitiveStringSearch;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
