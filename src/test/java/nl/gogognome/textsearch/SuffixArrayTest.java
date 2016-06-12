@@ -128,17 +128,41 @@ public class SuffixArrayTest {
     }
 
     @Test
-    public void testEndOfLine() {
+    public void testEndOfLineIncludingNewLine() {
         SuffixArray suffixArray = new SuffixArray("bla\n\rdie\n\rbla", false);
-        assertEquals(3, suffixArray.getEndOfLine(0));
-        assertEquals(3, suffixArray.getEndOfLine(1));
-        assertEquals(3, suffixArray.getEndOfLine(2));
-        assertEquals(8, suffixArray.getEndOfLine(5));
-        assertEquals(8, suffixArray.getEndOfLine(6));
-        assertEquals(8, suffixArray.getEndOfLine(7));
-        assertEquals(13, suffixArray.getEndOfLine(10));
-        assertEquals(13, suffixArray.getEndOfLine(11));
-        assertEquals(13, suffixArray.getEndOfLine(12));
+        assertEquals(5, suffixArray.getEndOfLineIncludingNewLine(0));
+        assertEquals(5, suffixArray.getEndOfLineIncludingNewLine(1));
+        assertEquals(5, suffixArray.getEndOfLineIncludingNewLine(2));
+        assertEquals(10, suffixArray.getEndOfLineIncludingNewLine(5));
+        assertEquals(10, suffixArray.getEndOfLineIncludingNewLine(6));
+        assertEquals(10, suffixArray.getEndOfLineIncludingNewLine(7));
+        assertEquals(13, suffixArray.getEndOfLineIncludingNewLine(10));
+        assertEquals(13, suffixArray.getEndOfLineIncludingNewLine(11));
+        assertEquals(13, suffixArray.getEndOfLineIncludingNewLine(12));
+
+        suffixArray = new SuffixArray("bla\ndie\n\nbla", false);
+        assertEquals(4, suffixArray.getEndOfLineIncludingNewLine(0));
+        assertEquals(8, suffixArray.getEndOfLineIncludingNewLine(4));
+        assertEquals(8, suffixArray.getEndOfLineIncludingNewLine(7));
+        assertEquals(9, suffixArray.getEndOfLineIncludingNewLine(8));
+    }
+
+    @Test
+    public void testEndOfLineExcludingNewLine() {
+        SuffixArray suffixArray = new SuffixArray("bla\n\rdie\n\rbla", false);
+        assertEquals(3, suffixArray.getEndOfLineExcludingNewLine(0));
+        assertEquals(3, suffixArray.getEndOfLineExcludingNewLine(1));
+        assertEquals(3, suffixArray.getEndOfLineExcludingNewLine(2));
+        assertEquals(3, suffixArray.getEndOfLineExcludingNewLine(3));
+        assertEquals(4, suffixArray.getEndOfLineExcludingNewLine(4));
+        assertEquals(8, suffixArray.getEndOfLineExcludingNewLine(5));
+        assertEquals(8, suffixArray.getEndOfLineExcludingNewLine(6));
+        assertEquals(8, suffixArray.getEndOfLineExcludingNewLine(7));
+        assertEquals(8, suffixArray.getEndOfLineExcludingNewLine(8));
+        assertEquals(9, suffixArray.getEndOfLineExcludingNewLine(9));
+        assertEquals(13, suffixArray.getEndOfLineExcludingNewLine(10));
+        assertEquals(13, suffixArray.getEndOfLineExcludingNewLine(11));
+        assertEquals(13, suffixArray.getEndOfLineExcludingNewLine(12));
     }
 
     @Test

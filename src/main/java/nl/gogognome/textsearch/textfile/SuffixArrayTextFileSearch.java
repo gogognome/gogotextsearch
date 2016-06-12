@@ -18,20 +18,36 @@ public class SuffixArrayTextFileSearch implements TextFileSearch {
 
     @Override
     public Iterator<String> matchesIterator(Criterion criterion) {
-        Iterator<Range> rangeSetIterator = getRangeSetsFor(criterion).iterator();
-        return new Iterator<String>() {
+        return new MatchesIterator(getRangeSetsFor(criterion).iterator());
+    }
 
-            @Override
-            public boolean hasNext() {
-                return rangeSetIterator.hasNext();
-            }
+    private class MatchesIterator implements Iterator<String> {
 
-            @Override
-            public String next() {
-                Range range = rangeSetIterator.next();
-                return suffixArray.substring(range.getStart(), range.getEnd());
+        private final Iterator<Range> rangeSetIterator;
+        private Range currentRange;
+
+        public MatchesIterator(Iterator<Range> rangeSetIterator) {
+            this.rangeSetIterator = rangeSetIterator;
+            if (rangeSetIterator.hasNext()) {
+                currentRange = rangeSetIterator.next();
             }
-        };
+        }
+
+        @Override
+        public boolean hasNext() {
+            return currentRange != null;
+        }
+
+        @Override
+        public String next() {
+            String result = suffixArray.substring(currentRange.getStart(), suffixArray.getEndOfLineExcludingNewLine(currentRange.getStart()));
+            int nextStart = suffixArray.getEndOfLineIncludingNewLine(currentRange.getStart());
+            currentRange = new Range(nextStart, currentRange.getEnd());
+            if (currentRange.isEmpty()) {
+                currentRange = rangeSetIterator.hasNext() ? rangeSetIterator.next() : null;
+            }
+            return result;
+        }
     }
 
     private RangeSet getRangeSetsFor(Criterion criterion) {
@@ -40,13 +56,14 @@ public class SuffixArrayTextFileSearch implements TextFileSearch {
             List<Integer> indexes = suffixArray.indexesOf(((StringLiteral) criterion).getLiteral());
             RangeSet rangeSet = new RangeSet();
             for (int index : indexes) {
-                rangeSet.add(new Range(suffixArray.getStartOfLine(index), suffixArray.getEndOfLine(index)));
+                rangeSet.add(new Range(suffixArray.getStartOfLine(index), suffixArray.getEndOfLineIncludingNewLine(index)));
             }
             return rangeSet;
         } else if (criterionClass.equals(And.class)) {
             And and = (And) criterion;
             RangeSet rangeSet = getRangeSetsFor(and.getLeft());
             rangeSet.retain(getRangeSetsFor(and.getRight()));
+            return rangeSet;
         } else if (criterionClass.equals(Or.class)) {
             Or or = (Or) criterion;
             RangeSet rangeSet = getRangeSetsFor(or.getLeft());
@@ -58,4 +75,5 @@ public class SuffixArrayTextFileSearch implements TextFileSearch {
         }
         throw new IllegalArgumentException("Unsupported criterion class found: " + criterion.getClass());
     }
+
 }
