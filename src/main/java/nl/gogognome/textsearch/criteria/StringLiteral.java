@@ -1,10 +1,7 @@
 package nl.gogognome.textsearch.criteria;
 
-import nl.gogognome.textsearch.string.CaseInsensitiveStringSearch;
-
 public class StringLiteral implements Criterion {
 
-    private final static CaseInsensitiveStringSearch CASE_INSENSITIVE_STRING_SEARCH = new CaseInsensitiveStringSearch();
     private final String literal;
 
     public StringLiteral(String literal) {

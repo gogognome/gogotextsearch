@@ -1,7 +1,7 @@
 package nl.gogognome.textsearch.textfile;
 
 import nl.gogognome.textsearch.criteria.Criterion;
-import nl.gogognome.textsearch.string.StringSearch;
+import nl.gogognome.textsearch.string.CriterionMatcher;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,11 +11,11 @@ import java.util.Iterator;
 
 public class OneOffTextFileSearch implements TextFileSearch {
 
-    private final StringSearch stringSearch;
+    private final CriterionMatcher criterionMatcher;
     private BufferedReader bufferedReader;
 
-    OneOffTextFileSearch(InputStream inputStream, StringSearch stringSearch) {
-        this.stringSearch = stringSearch;
+    OneOffTextFileSearch(InputStream inputStream, CriterionMatcher criterionMatcher) {
+        this.criterionMatcher = criterionMatcher;
         bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
     }
 
@@ -24,22 +24,22 @@ public class OneOffTextFileSearch implements TextFileSearch {
         if (bufferedReader == null) {
             throw new IllegalStateException("The iterator can be used only once! Create a new instance of this class if you need to iterate again.");
         }
-        MatchIterator iterator = new MatchIterator(bufferedReader, criterion, stringSearch);
+        MatchIterator iterator = new MatchIterator(bufferedReader, criterion, criterionMatcher);
         bufferedReader = null;
         return iterator;
     }
 
     private static class MatchIterator implements Iterator<String> {
 
-        private final StringSearch stringSearch;
+        private final CriterionMatcher criterionMatcher;
         private final BufferedReader bufferedReader;
         private final Criterion criterion;
         private String nextValue;
 
-        private MatchIterator(BufferedReader bufferedReader, Criterion criterion, StringSearch stringSearch) {
+        private MatchIterator(BufferedReader bufferedReader, Criterion criterion, CriterionMatcher criterionMatcher) {
             this.bufferedReader = bufferedReader;
             this.criterion = criterion;
-            this.stringSearch = stringSearch;
+            this.criterionMatcher = criterionMatcher;
 
             determineNextValue();
         }
@@ -60,7 +60,7 @@ public class OneOffTextFileSearch implements TextFileSearch {
             try {
                 nextValue = null;
                 for (String line = bufferedReader.readLine(); line != null && nextValue == null; line = bufferedReader.readLine()) {
-                    if (stringSearch.matches(line, criterion)) {
+                    if (criterionMatcher.matches(line, criterion)) {
                         nextValue = line;
                     }
                 }

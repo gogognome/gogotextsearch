@@ -1,6 +1,5 @@
 package nl.gogognome.textsearch.textfile;
 
-import nl.gogognome.textsearch.string.MultilineString;
 import nl.gogognome.textsearch.string.SuffixArray;
 import nl.gogognome.textsearch.criteria.*;
 

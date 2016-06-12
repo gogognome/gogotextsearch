@@ -1,5 +1,6 @@
-package nl.gogognome.textsearch.string;
+package nl.gogognome.textsearch.textfile;
 
+import nl.gogognome.textsearch.textfile.MultilineString;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

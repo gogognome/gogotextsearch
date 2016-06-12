@@ -1,6 +1,6 @@
-package nl.gogognome.textsearch.string;
+package nl.gogognome.textsearch.textfile;
 
-public class MultilineString {
+class MultilineString {
 
     private final String data;
     private final int dataLength;
