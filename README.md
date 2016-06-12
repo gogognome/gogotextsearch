@@ -41,30 +41,34 @@ You can use these classes to build search criteria, but the easiest way is to us
 
 ## String search
 
-The package `nl.gogognome.textsearch.string` contains classes to search strings. One class will check whether a
-string matches a criterion. The other classes implement a case insensitive `indexOf()` method.
+The package `nl.gogognome.textsearch.string` contains classes to search strings. There are two different 
+searches implemented:
 
-### Check whether a string matches a criterion
+1. Search the first index of a search string within a string
+2. Check whether a search criterion matches with a string
 
-Once you have created a `Criterion` instance you can use it to check whether a string matches this criterion:
+Both kind of searches can be case sensitive or case insensitive. Use the `StringSearchFactory` to create an instance
+of the search or matcher class that you need.
 
-    Criterion searchCriterion = new Parser().parse("foo AND bar"); 
-    boolean matches = new StringSearch().matches("Barefoot is a movie directed by Andrew Flemming.", criterion);
-    // matches == true
-    
-The class `StringSearch` matches stirng literala case-insensitively, hence `Barefoot` matches `foo AND bar`.
+### Search for the first index of a search string
 
-### Alternatives to String.indexOf()
+If you are looking for an implementation of `String.indexOf()` that is case insensitive, 
+you can do this:
 
-If you are looking for an implemention of `String.indexOf()` that is case insensitive, 
-you can use `CaseInsensitiveStringSearch` like this:
-
-    CaseInsensitiveStringSearch caseInsensitiveStringSearch = new CaseInsensitiveStringSearch()
-    int index = caseInsensitiveStringSearch.indexOfIgnoreCase("Barefoot is a movie directed by Andrew Flemming.", "Foot");
+    StringSearch stringSearch = new StringSearchFactory().caseInsensitiveStringSearch();
+    int index = stringSearch.indexOfIgnoreCase("Barefoot is a movie directed by Andrew Flemming.", "Foot");
     // index == 4
 
-If you have want to find the index of different string literals in one string again and again the for large strings
-it is more efficient to use _suffix arrays_. This is a technique to quickly generate a kind of lookup table for the
+For a case senstive implementation use `new StringSearchFactory().caseSensitiveStringSearch()` instead. Under the
+hood the implementation for case sensitive search uses `String.indexOf()`. It is still useful to have both
+case senstive and case insensitive implementations, because both are used by the criterion matcher for case sensitive
+and case insensitive matching of search criteria.
+
+### Search for indexes of a search string using Suffix Arrays
+
+If you want to find the index of different string literals in one string again and again the for large strings,
+it is more efficient to use a _suffix array_ than the search string solutions of the previous section. 
+A suffix array is a technique to quickly generate a kind of lookup table for the
 string using very little extra memory. You can use it like this:
 
     boolean caseSensitive = true;
@@ -73,6 +77,17 @@ string using very little extra memory. You can use it like this:
     // index == 4
     List<Integer> indixes = suffixArray.indexesOf("bla");
     // indixes == [0, 9]
+
+Once you have a SuffixArray instance created you can search as often as you want for any search string.
+
+### Check whether a string matches a criterion
+
+Once you have created a `Criterion` instance you can use it to check whether a string matches this criterion:
+
+    Criterion searchCriterion = new Parser().parse("foo AND bar");
+    CriterionMatcher matcher = new StringSearchFactory().caseInsensitiveCriterionMatcher();
+    boolean matches = matcher.matches("Barefoot is a movie directed by Andrew Flemming.", criterion);
+    // matches == true
 
 ## Text file search
 
@@ -103,3 +118,4 @@ or use the `SuffixArrayTextFileSearch` which is optimized for multiple searches 
 
 ### SuffixArrayTextFileSearch
 
+This section will be written soon.
