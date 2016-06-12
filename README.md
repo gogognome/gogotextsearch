@@ -96,6 +96,9 @@ a method to get an iterator that returns lines of a text file that match a searc
 
 Currently two implementations are available for this interface: `OneOffTextFileSearch` and `SuffixArrayTextFileSearch`.
 
+These two implementations are used by the classes `CachedSearchableTextFile` and `NonCachedSearchableTextFile`,
+which make it easier to search a file multiple times and get the matches in a list instead as an iterator.
+
 ### OneOffTextFileSearch
 
 This class is intended for searching a file just once. Its constructor expects an input stream to the file contents
@@ -118,4 +121,26 @@ or use the `SuffixArrayTextFileSearch` which is optimized for multiple searches 
 
 ### SuffixArrayTextFileSearch
 
-This section will be written soon.
+This class is intended for searching a file multiple times. Its constructor expects a String of the file's contents.
+Next call `matchesIterator()` with a `Criterion` as often as you want to find matches.
+
+    SuffixArrayTextFileSearch fileSearch = new SuffixArrayTextFileSearch("Some huge file's contents here...");
+    Iterator<String> iter1 = fileSearch.matchesIterator(new Parser().parse("foo AND bar"));
+    // Iterate until iter1 has no more elements
+    Iterator<String> iter2 = fileSearch.matchesIterator(new Parser().parse("'something else'"));
+    // Iterate until iter2 has no more elements
+
+### CachedSearchableTextFile and NonCachedSearchableTextFile
+
+These two classes offer the same methods. Their constructors expect a `File` and a `Charset`. 
+`NonCachedSearchableTextFile` takes care of opening and closing the `InputStream` for 
+the underlying `OneOffTextFileSearch` and `CachedSearchableTextFile` reads the file and creates the underlying
+`SuffixArrayTextFileSearch` with the file's contents.
+
+Typical usage:
+
+    CachedSearchableTextFile searchableTextFile = new CachedSearchableTextFile(file, Charset.forName("UTF-8"));
+    List<String> matches1 = searchableTextFile.getAllLinesMatching(new Parser().parse("foo AND bar"));
+    // Get matches 100 up to 200 (i.e., skip 100 and next take 200-100 matches)
+    List<String> matches2 = searchableTextFile.getLinesMatching(new Parser().parse("'something else'"), 100, 200);
+    
