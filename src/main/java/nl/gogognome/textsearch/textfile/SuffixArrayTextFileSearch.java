@@ -78,4 +78,8 @@ public class SuffixArrayTextFileSearch implements TextFileSearch {
         throw new IllegalArgumentException("Unsupported criterion class found: " + criterion.getClass());
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " with data: " + suffixArray.toString();
+    }
 }
