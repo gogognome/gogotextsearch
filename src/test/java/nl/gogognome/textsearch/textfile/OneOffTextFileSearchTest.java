@@ -61,7 +61,7 @@ public class OneOffTextFileSearchTest {
         when(inputStream.read(anyObject())).thenThrow(new IOException("Test exception"));
         when(inputStream.read(anyObject(), anyInt(), anyInt())).thenThrow(new IOException("Test exception"));
 
-        OneOffTextFileSearch oneOffTextFileSearch = new OneOffTextFileSearch(inputStream, criterionMatcher);
+        OneOffTextFileSearch oneOffTextFileSearch = new OneOffTextFileSearch(inputStream, Charset.forName("UTF-8"), criterionMatcher);
 
         try {
             oneOffTextFileSearch.matchesIterator(someCriterion);
@@ -73,6 +73,7 @@ public class OneOffTextFileSearchTest {
     }
 
     private OneOffTextFileSearch buildOneOffTextFileSearch(String text) {
-        return new OneOffTextFileSearch(new ByteArrayInputStream(text.getBytes(Charset.forName("UTF-8"))), criterionMatcher);
+        Charset charset = Charset.forName("UTF-8");
+        return new OneOffTextFileSearch(new ByteArrayInputStream(text.getBytes(charset)), charset, criterionMatcher);
     }
 }
