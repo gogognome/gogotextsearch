@@ -59,7 +59,7 @@ public class NonCachedSearchableTextFileTest {
         NonCachedSearchableTextFile searchableTextFile = new NonCachedSearchableTextFile(file, CHARSET);
         searchableTextFile.ensureTextFileSearchIsInitizialized();
         TextFileSearch firstTextFileSearch = searchableTextFile.textFileSearch;
-        searchableTextFile.onSearchFinished();;
+        searchableTextFile.onSearchFinished();
 
         try {
             searchableTextFile.ensureTextFileSearchIsInitizialized();

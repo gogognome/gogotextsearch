@@ -1,6 +1,5 @@
 package nl.gogognome.textsearch.string;
 
-import nl.gogognome.textsearch.string.SuffixArray;
 import org.junit.Test;
 
 import java.util.Arrays;

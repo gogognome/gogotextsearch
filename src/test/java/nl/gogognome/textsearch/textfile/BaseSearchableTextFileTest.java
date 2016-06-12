@@ -3,15 +3,13 @@ package nl.gogognome.textsearch.textfile;
 import nl.gogognome.textsearch.criteria.Criterion;
 import nl.gogognome.textsearch.criteria.StringLiteral;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class BaseSearchableTextFileTest {
