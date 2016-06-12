@@ -1,5 +1,6 @@
 package nl.gogognome.textsearch.textfile;
 
+import nl.gogognome.textsearch.string.MultilineString;
 import nl.gogognome.textsearch.string.SuffixArray;
 import nl.gogognome.textsearch.criteria.*;
 
@@ -9,10 +10,12 @@ import java.util.List;
 public class SuffixArrayTextFileSearch implements TextFileSearch {
 
     private final SuffixArray suffixArray;
+    private final MultilineString multilineString;
     private final int dataLength;
 
     SuffixArrayTextFileSearch(String data) {
         suffixArray = new SuffixArray(data, false);
+        multilineString = new MultilineString(data);
         dataLength = data.length();
     }
 
@@ -40,8 +43,8 @@ public class SuffixArrayTextFileSearch implements TextFileSearch {
 
         @Override
         public String next() {
-            String result = suffixArray.substring(currentRange.getStart(), suffixArray.getEndOfLineExcludingNewLine(currentRange.getStart()));
-            int nextStart = suffixArray.getEndOfLineIncludingNewLine(currentRange.getStart());
+            String result = suffixArray.substring(currentRange.getStart(), multilineString.getEndOfLineExcludingNewLine(currentRange.getStart()));
+            int nextStart = multilineString.getEndOfLineIncludingNewLine(currentRange.getStart());
             currentRange = new Range(nextStart, currentRange.getEnd());
             if (currentRange.isEmpty()) {
                 currentRange = rangeSetIterator.hasNext() ? rangeSetIterator.next() : null;
@@ -56,7 +59,7 @@ public class SuffixArrayTextFileSearch implements TextFileSearch {
             List<Integer> indexes = suffixArray.indexesOf(((StringLiteral) criterion).getLiteral());
             RangeSet rangeSet = new RangeSet();
             for (int index : indexes) {
-                rangeSet.add(new Range(suffixArray.getStartOfLine(index), suffixArray.getEndOfLineIncludingNewLine(index)));
+                rangeSet.add(new Range(multilineString.getStartOfLine(index), multilineString.getEndOfLineIncludingNewLine(index)));
             }
             return rangeSet;
         } else if (criterionClass.equals(And.class)) {
