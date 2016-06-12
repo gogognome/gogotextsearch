@@ -41,6 +41,11 @@ You can use these classes to build search criteria, but the easiest way is to us
 
 ## String search
 
+The package `nl.gogognome.textsearch.string` contains classes to search strings. One class will check whether a
+string matches a criterion. The other classes implement a case insensitive `indexOf()` method.
+
+### Check whether a string matches a criterion
+
 Once you have created a `Criterion` instance you can use it to check whether a string matches this criterion:
 
     Criterion searchCriterion = new Parser().parse("foo AND bar"); 
@@ -48,6 +53,26 @@ Once you have created a `Criterion` instance you can use it to check whether a s
     // matches == true
     
 The class `StringSearch` matches stirng literala case-insensitively, hence `Barefoot` matches `foo AND bar`.
+
+### Alternatives to String.indexOf()
+
+If you are looking for an implemention of `String.indexOf()` that is case insensitive, 
+you can use `CaseInsensitiveStringSearch` like this:
+
+    CaseInsensitiveStringSearch caseInsensitiveStringSearch = new CaseInsensitiveStringSearch()
+    int index = caseInsensitiveStringSearch.indexOfIgnoreCase("Barefoot is a movie directed by Andrew Flemming.", "Foot");
+    // index == 4
+
+If you have want to find the index of different string literals in one string again and again the for large strings
+it is more efficient to use _suffix arrays_. This is a technique to quickly generate a kind of lookup table for the
+string using very little extra memory. You can use it like this:
+
+    boolean caseSensitive = true;
+    SuffixArray suffixArray = new SuffixArray("bla blop bla", caseSensitive);
+    int index = suffixArray.indexOf("blop");
+    // index == 4
+    List<Integer> indixes = suffixArray.indexesOf("bla");
+    // indixes == [0, 9]
 
 ## Text file search
 
