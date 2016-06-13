@@ -2,6 +2,18 @@ package nl.gogognome.textsearch.string;
 
 import nl.gogognome.textsearch.criteria.*;
 
+/**
+ * <p>This class checks whether a {@link Criterion} matches a specified String.</p>
+ *
+ * <p>Typical usage:</p>
+ *
+ * <pre>
+ *   Criterion searchCriterion = new Parser().parse("foo AND bar");
+ *   CriterionMatcher matcher = new StringSearchFactory().caseInsensitiveCriterionMatcher();
+ *   boolean matches = matcher.matches("Barefoot is a movie directed by Andrew Flemming.", criterion);
+ *   // matches == true
+ * </pre>
+ */
 public class CriterionMatcher {
 
     private final StringSearch stringSearch;

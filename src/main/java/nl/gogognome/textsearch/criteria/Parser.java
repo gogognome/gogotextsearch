@@ -2,11 +2,25 @@ package nl.gogognome.textsearch.criteria;
 
 import java.util.Iterator;
 
+/**
+ * <p>Use this class to parse a string representations of a {@link Criterion}.</p>
+ *
+ * <p>Typical usage:</p>
+ * <pre>
+ *     Criterion searchCriterion = new Parser().parse("foo AND bar");
+ * </pre>
+ */
 public class Parser {
 
     private String currentToken;
     private Iterator<String> tokenIterator;
 
+    /**
+     * Parses a string representations of a Criterion.
+     * @param text a string representations
+     * @return a Criterion
+     * @throws IllegalArgumentException if the string contains a syntax error
+     */
     public Criterion parse(String text) {
         tokenIterator = new LexicalScanner(text).scan().iterator();
         nextToken();

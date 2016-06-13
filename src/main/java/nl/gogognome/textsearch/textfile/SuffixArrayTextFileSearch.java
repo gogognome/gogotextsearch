@@ -6,6 +6,20 @@ import nl.gogognome.textsearch.string.SuffixArray;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * <p>This class is intended for searching a file multiple times. Its constructor expects a String
+ * of the file's contents. Next call {@link #matchesIterator(Criterion)}}  with a {@link Criterion} as often as
+ * you want to find matches.</p>
+ *
+ * <p>Example usage:</p>
+ * <pre>
+ *    SuffixArrayTextFileSearch fileSearch = new SuffixArrayTextFileSearch("Some huge file's contents here...");
+ *    Iterator<String> iter1 = fileSearch.matchesIterator(new Parser().parse("foo AND bar"));
+ *    // Iterate until iter1 has no more elements
+ *    Iterator<String> iter2 = fileSearch.matchesIterator(new Parser().parse("'something else'"));
+ *    // Iterate until iter2 has no more elements
+ * </pre>
+ */
 public class SuffixArrayTextFileSearch implements TextFileSearch {
 
     private final SuffixArray suffixArray;

@@ -10,6 +10,28 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 
+/**
+ * <p>This class is intended for searching a file just once. Its constructor expects an input stream to the file
+ * contents and a {@link nl.gogognome.textsearch.string.StringSearch} instance for matching a line with a criterion.
+ * Finally, you ask for the iterator that returns  all lines matching a specific criterion.
+ * The iterator returns each matching line of the text file. This class does not close the input stream.</p>
+ *
+ * <p>Example usage:</p>
+ * <pre>
+ *   InputStream inputStream = ...;
+ *   Criterion searchCriterion = new Parser().parse("foo AND bar");
+ *   Iterator<String> iter = new OneOffTextFileSearch(inputStream, new StringSearch()).matchesIterator(searchCriterion);
+ *   while (iter.hasNext()) {
+ *   String nextLine = iter.next();
+ *   }
+ *   inputStream.close();
+ * </pre>
+ *
+ * <p>You are only allowed to ask for an iterator once, because the input stream is only read once. This library makes
+ * no assumptions on the capabilities of the input stream, whether its position can be reset or not.
+ * If you need to search  the file again with a different criterion, either create a new {@link OneOffTextFileSearch}
+ * or use the {@link SuffixArrayTextFileSearch} which is optimized for multiple searches on the same file.</p>
+ */
 public class OneOffTextFileSearch implements TextFileSearch {
 
     private final CriterionMatcher criterionMatcher;

@@ -1,5 +1,8 @@
 package nl.gogognome.textsearch.string;
 
+/**
+ * Case sensitive implementation of {@link StringSearch}.
+ */
 class CaseSensitiveStringSearch implements StringSearch {
 
     @Override

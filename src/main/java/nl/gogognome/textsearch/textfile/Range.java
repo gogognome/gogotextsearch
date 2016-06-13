@@ -1,5 +1,10 @@
 package nl.gogognome.textsearch.textfile;
 
+/**
+ * <p>Implements a range of integers of the form [start, end). The range contains all numbers <code>n</code> for which
+ * holds: <code>start <= n && n < end</code>.</p>
+ * <p>Instances of this class are immutable.</p>
+ */
 class Range implements Comparable<Range> {
 
     private final static Range EMPTY = new Range(0, 0);

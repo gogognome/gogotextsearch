@@ -1,6 +1,9 @@
 package nl.gogognome.textsearch.string;
 
-// Based on code from http://stackoverflow.com/questions/1126227/indexof-case-sensitive
+/**
+ * Case insensitive implementation of {@link StringSearch}.
+ * Based on code from http://stackoverflow.com/questions/1126227/indexof-case-sensitive
+ */
 class CaseInsensitiveStringSearch implements StringSearch {
 
     public int indexOf(final String data, final String searchText) {

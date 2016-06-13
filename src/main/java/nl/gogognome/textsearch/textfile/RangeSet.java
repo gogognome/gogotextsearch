@@ -7,6 +7,10 @@ import java.util.List;
 import static java.util.Collections.binarySearch;
 import static java.util.stream.Collectors.joining;
 
+/**
+ * <p>This class implements a set of {@link Range}s. Instances of this class are mutable.</p>
+ * <p>This range set keeps a sorted list of non-overlapping {@link Range}s to represent the range set.</p>
+ */
 class RangeSet implements Iterable<Range> {
 
     // invariant: ranges are sorted increasingly on start and are disjoint
@@ -90,6 +94,12 @@ class RangeSet implements Iterable<Range> {
         return index;
     }
 
+    /**
+     * Determines the intersection of this range set and the parameter and then changes this change set to be
+     * equal to the intersection.
+     * @param rangeSet a range set
+     * @return this (for method chaining
+     */
     public RangeSet retain(RangeSet rangeSet) {
         List<Range> ranges1 = new ArrayList<>(this.ranges);
         List<Range> ranges2 = rangeSet.ranges;

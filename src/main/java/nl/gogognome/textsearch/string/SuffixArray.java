@@ -4,6 +4,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * <p>If you want to find the index of different string literals in one string again and again the for large strings,
+ * it is more efficient to use a <i>suffix array</i> than <code>String.indexOf()</code>.
+ * A suffix array is a technique to quickly generate a kind of lookup table for the string using very little
+ * extra memory.</p>
+ *
+ * <p>You can use it like this:</p>
+ *
+ * <pre>
+ *   boolean caseSensitive = true;
+ *   SuffixArray suffixArray = new SuffixArray("bla blop bla", caseSensitive);
+ *   int index = suffixArray.indexOf("blop");
+ *   // index == 4
+ *   List<Integer> indixes = suffixArray.indexesOf("bla");
+ *   // indixes == [0, 9]
+ * </pre>
+ */
 public class SuffixArray {
 
     private final String data;
@@ -11,6 +28,13 @@ public class SuffixArray {
     private final int[] suffixArray;
     private final boolean caseSensitive;
 
+    /**
+     * Constructs a suffix array for <code>data</code>. String searches can be case sensitive or case insensitive,
+     * depending on the paramter <code>caseSensitive</code>
+     * @param data the data to be searched later on
+     * @param caseSensitive <code>true</code> if searches must be case sensitve; <code>false</code> if searches
+     *                      must be case insensitive
+     */
     public SuffixArray(String data, boolean caseSensitive) {
         this.data = data;
         this.caseSensitive = caseSensitive;
@@ -76,6 +100,9 @@ public class SuffixArray {
         suffixArray[index2] = temp;
     }
 
+    /**
+     * @return a string representation  of the suffix array
+     */
     public String toString() {
         // length of constructed string is 2 + 3 + 4 + ... + (dataLength + 1)
         // 1 + 2 + ... + n = (n+1) * n / 2 is a well-known equation
@@ -88,11 +115,23 @@ public class SuffixArray {
         return sb.toString();
     }
 
+    /**
+     * Gets the index of the first occurrence of <code>searchString</code> in the data.
+     * @param searchString the text to be found
+     * @return the index of the first occurrence or -1 if the <code>searchString</code> does not occur
+     *                     at all in the data
+     */
     public int indexOf(String searchString) {
         List<Integer> indexes = indexesOf(searchString);
         return indexes.isEmpty() ? -1 : indexes.get(0);
     }
 
+    /**
+     * Gets indexes of all occurrence of <code>searchString</code> in the data.
+     * @param searchString the text to be found
+     * @return a list of indexes of all occurrence of <code>searchString</code>. The indexes are sorted increasingly.
+     *         Never returns <code>null</code>. If no occurrences are present, an empty list is returned.
+     */
     public List<Integer> indexesOf(String searchString) {
         validateSearchString(searchString);
 
@@ -154,6 +193,13 @@ public class SuffixArray {
         return 0;
     }
 
+    /**
+     * Gets a substring from the data.
+     * @param start start index. Must be smaller than the length of the data
+     * @param end end index. <code>start + end</code> must be smaller than or equal to the length of the data
+     * @return the substring
+     * @exception  IndexOutOfBoundsException  if start or end are incorrect
+     */
     public String substring(int start, int end) {
         return data.substring(start, end);
     }
