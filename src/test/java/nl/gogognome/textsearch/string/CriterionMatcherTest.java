@@ -12,7 +12,7 @@ public class CriterionMatcherTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void whenUnknownCriterionImplementationIsPassedThenMatchesShouldThrowException() {
-        new CriterionMatcher(stringSearchFactory.caseSensitiveStringSearch()).matches("bladiebla", Mockito.mock(Criterion.class));
+        new CriterionMatcher(stringSearchFactory.caseSensitiveStringSearch()).matches(Mockito.mock(Criterion.class), "bladiebla");
     }
 
     @Test
@@ -31,33 +31,49 @@ public class CriterionMatcherTest {
     }
 
     private void assertMatchesCaseSensitive(String text, Criterion criterion) {
-        assertTrue(new CriterionMatcher(stringSearchFactory.caseSensitiveStringSearch()).matches(text, criterion));
+        assertTrue(new CriterionMatcher(stringSearchFactory.caseSensitiveStringSearch()).matches(criterion, text));
     }
 
     private void assertNotMatchesCaseSensitive(String text, Criterion criterion) {
-        assertFalse(new CriterionMatcher(stringSearchFactory.caseSensitiveStringSearch()).matches(text, criterion));
+        assertFalse(new CriterionMatcher(stringSearchFactory.caseSensitiveStringSearch()).matches(criterion, text));
     }
 
     @Test
     public void testMatches_caseInsensitive() {
-        assertMatchesCaseInsensitive("bladiebla", new StringLiteral("DIEB"));
-        assertMatchesCaseInsensitive("bladiebla", new And(new StringLiteral("bla"), new StringLiteral("DIEB")));
-        assertMatchesCaseInsensitive("bladiebla", new Or(new StringLiteral("BLA"), new StringLiteral("blup")));
-        assertMatchesCaseInsensitive("bladiebla", new Or(new StringLiteral("blup"), new StringLiteral("BLA")));
-        assertMatchesCaseInsensitive("bladiebla", new Not(new StringLiteral("BlUp")));
+        assertMatchesCaseInsensitive(new StringLiteral("DIEB"), "bladiebla");
+        assertMatchesCaseInsensitive(new And(new StringLiteral("bla"), new StringLiteral("DIEB")), "bladiebla");
+        assertMatchesCaseInsensitive(new Or(new StringLiteral("BLA"), new StringLiteral("blup")), "bladiebla");
+        assertMatchesCaseInsensitive(new Or(new StringLiteral("blup"), new StringLiteral("BLA")), "bladiebla");
+        assertMatchesCaseInsensitive(new Not(new StringLiteral("BlUp")), "bladiebla");
 
-        assertNotMatchesCaseInsensitive("bladiebla", new StringLiteral("bLuP"));
-        assertNotMatchesCaseInsensitive("bladiebla", new And(new StringLiteral("blup"), new StringLiteral("DIEB")));
-        assertNotMatchesCaseInsensitive("bladiebla", new And(new StringLiteral("DIEB"), new StringLiteral("blup")));
-        assertNotMatchesCaseInsensitive("bladiebla", new Or(new StringLiteral("blop"), new StringLiteral("blup")));
-        assertNotMatchesCaseInsensitive("bladiebla", new Not(new StringLiteral("BLA")));
+        assertNotMatchesCaseInsensitive(new StringLiteral("bLuP"), "bladiebla");
+        assertNotMatchesCaseInsensitive(new And(new StringLiteral("blup"), new StringLiteral("DIEB")), "bladiebla");
+        assertNotMatchesCaseInsensitive(new And(new StringLiteral("DIEB"), new StringLiteral("blup")), "bladiebla");
+        assertNotMatchesCaseInsensitive(new Or(new StringLiteral("blop"), new StringLiteral("blup")), "bladiebla");
+        assertNotMatchesCaseInsensitive(new Not(new StringLiteral("BLA")), "bladiebla");
     }
 
-    private void assertMatchesCaseInsensitive(String text, Criterion criterion) {
-        assertTrue(new CriterionMatcher(stringSearchFactory.caseInsensitiveStringSearch()).matches(text, criterion));
+    @Test
+    public void testMatchesWithZeroStringArguments() {
+        assertNotMatchesCaseInsensitive(new StringLiteral("bla"));
+        assertMatchesCaseInsensitive(new Not(new StringLiteral("bla")));
     }
 
-    private void assertNotMatchesCaseInsensitive(String text, Criterion criterion) {
-        assertFalse(new CriterionMatcher(stringSearchFactory.caseInsensitiveStringSearch()).matches(text, criterion));
+    @Test
+    public void testMatchesWithTwoStringArguments() {
+        assertMatchesCaseInsensitive(new StringLiteral("foo"), "foo", "bar");
+        assertMatchesCaseInsensitive(new StringLiteral("bar"), "foo", "bar");
+        assertMatchesCaseInsensitive(new StringLiteral("bar"), "bar", "bar");
+        assertNotMatchesCaseInsensitive(new StringLiteral("foo"), "one", "two");
+        assertNotMatchesCaseInsensitive(new Not(new StringLiteral("foo")), "foo", "bar");
+        assertNotMatchesCaseInsensitive(new Not(new StringLiteral("bar")), "foo", "bar");
+    }
+
+    private void assertMatchesCaseInsensitive(Criterion criterion, String... text) {
+        assertTrue(new CriterionMatcher(stringSearchFactory.caseInsensitiveStringSearch()).matches(criterion, text));
+    }
+
+    private void assertNotMatchesCaseInsensitive(Criterion criterion, String... text) {
+        assertFalse(new CriterionMatcher(stringSearchFactory.caseInsensitiveStringSearch()).matches(criterion, text));
     }
 }

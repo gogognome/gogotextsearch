@@ -33,17 +33,17 @@ public class OneOffTextFileSearchTest {
 
     @Test
     public void emptyInputStreamShouldHaveNoMatches() {
-        when(criterionMatcher.matches(anyString(), any(Criterion.class))).thenReturn(true);
+        when(criterionMatcher.matches(any(Criterion.class), anyString())).thenReturn(true);
 
         OneOffTextFileSearch oneOffTextFileSearch = buildOneOffTextFileSearch("");
 
         assertFalse(oneOffTextFileSearch.matchesIterator(someCriterion).hasNext());
-        verify(criterionMatcher, never()).matches(anyString(), any(Criterion.class));
+        verify(criterionMatcher, never()).matches(any(Criterion.class), anyString());
     }
 
     @Test
     public void inputStreamWithTwoLinesAndOneOfWhichMatchesShouldReturnOneLine() {
-        when(criterionMatcher.matches(anyString(), any(Criterion.class))).thenReturn(false, true);
+        when(criterionMatcher.matches(any(Criterion.class), anyString())).thenReturn(false, true);
 
         OneOffTextFileSearch oneOffTextFileSearch = buildOneOffTextFileSearch("one\ntwo");
 
@@ -51,7 +51,7 @@ public class OneOffTextFileSearchTest {
         assertTrue(iterator.hasNext());
         assertEquals("two", iterator.next());
         assertFalse(iterator.hasNext());
-        verify(criterionMatcher, times(2)).matches(anyString(), any(Criterion.class));
+        verify(criterionMatcher, times(2)).matches(any(Criterion.class), anyString());
     }
 
     @Test

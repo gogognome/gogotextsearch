@@ -83,7 +83,7 @@ public class OneOffTextFileSearch implements TextFileSearch {
             try {
                 nextValue = null;
                 for (String line = bufferedReader.readLine(); line != null && nextValue == null; line = bufferedReader.readLine()) {
-                    if (criterionMatcher.matches(line, criterion)) {
+                    if (criterionMatcher.matches(criterion, line)) {
                         nextValue = line;
                     }
                 }

@@ -28,15 +28,15 @@ public class StringSearchFactoryTest {
     @Test
     public void testCaseInsensitveCriterionMatcher() {
         CriterionMatcher criterionMatcher = factory.caseInsensitiveCriterionMatcher();
-        assertTrue(criterionMatcher.matches("A", new Parser().parse("A")));
-        assertTrue(criterionMatcher.matches("A", new Parser().parse("a")));
+        assertTrue(criterionMatcher.matches(new Parser().parse("A"), "A"));
+        assertTrue(criterionMatcher.matches(new Parser().parse("a"), "A"));
     }
 
     @Test
     public void testCaseSensitveCriterionMatcher() {
         CriterionMatcher criterionMatcher = factory.caseSensitiveCriterionMatcher();
-        assertTrue(criterionMatcher.matches("A", new Parser().parse("A")));
-        assertFalse(criterionMatcher.matches("A", new Parser().parse("a")));
+        assertTrue(criterionMatcher.matches(new Parser().parse("A"), "A"));
+        assertFalse(criterionMatcher.matches(new Parser().parse("a"), "A"));
     }
 
 }

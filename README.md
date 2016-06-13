@@ -86,9 +86,28 @@ Once you have created a `Criterion` instance you can use it to check whether a s
 
     Criterion searchCriterion = new Parser().parse("foo AND bar");
     CriterionMatcher matcher = new StringSearchFactory().caseInsensitiveCriterionMatcher();
-    boolean matches = matcher.matches("Barefoot is a movie directed by Andrew Flemming.", criterion);
+    boolean matches = matcher.matches(criterion, "Barefoot is a movie directed by Andrew Flemming.");
     // matches == true
 
+A special use case is that the `Criterion` must be matched against a number of attributes of an object.
+This could be implemented by joining these attributes' values to a single string, separated by a character
+ that does not occur in the `Criterion`, and then matching
+the `Criterion` against this resulting string. This approach however would require a lot of string copying
+which is time consuming and produces a lot of gargabe on the heap. To overcome this problem
+the method `matches()` accepts a varargs string argument.
+The strings passed to the method are treated as if they were all joined together to a single string, separated
+by a character that does not occur in the {@link Criterion}.
+</p>
+
+<pre>
+  Criterion searchCriterion = new Parser().parse("foo AND bar");
+  CriterionMatcher matcher = new StringSearchFactory().caseInsensitiveCriterionMatcher();
+  boolean matches1 = matcher.matches(criterion, "Bart", "food");
+  // matches1 == true
+  boolean matches2 = matcher.matches(criterion, "ba", "rt food");
+  // matches2 == false because "bar" is not found
+</pre>
+ 
 ## Text file search
 
 The package `nl.gogognome.textsearch.textfile` contains the interface `TextFileSearch`. This interface specifies
