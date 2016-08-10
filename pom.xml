@@ -3,7 +3,7 @@
 
     <groupId>nl.gogognome</groupId>
     <artifactId>gogotextsearch</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Gogo Text Search</name>
@@ -31,8 +31,8 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/gogognomne/gogotextsearch.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:gogognome/gogotextsearch.git</developerConnection>
+        <connection>scm:git:git@github.com:gogognome/gogotextsearch.git</connection>
+        <developerConnection>scm:git:git@github.com:gogognome/gogotextsearch.git</developerConnection>
         <url>https://github.com/gogognome/gogotextsearch</url>
       <tag>gogotextsearch-1.0.0</tag>
   </scm>
