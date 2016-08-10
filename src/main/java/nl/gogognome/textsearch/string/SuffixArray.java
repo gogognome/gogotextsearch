@@ -12,14 +12,14 @@ import java.util.List;
  *
  * <p>You can use it like this:</p>
  *
- * <pre>
+ * <pre><code>
  *   boolean caseSensitive = true;
  *   SuffixArray suffixArray = new SuffixArray("bla blop bla", caseSensitive);
  *   int index = suffixArray.indexOf("blop");
  *   // index == 4
- *   List<Integer> indixes = suffixArray.indexesOf("bla");
- *   // indixes == [0, 9]
- * </pre>
+ *   List<Integer> indices = suffixArray.indexesOf("bla");
+ *   // indices == [0, 9]
+ * </code></pre>
  */
 public class SuffixArray {
 
