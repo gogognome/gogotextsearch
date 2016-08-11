@@ -1,6 +1,8 @@
 # gogo text search
 Simple library for searching text in strings using expressions like "foo and bar and not (blub or blob)"
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/nl.gogognome/gogotextsearch/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/nl.gogognome/gogotextsearch)
+
 ## Search criterion
 
 What is searched for is defined by a _search criterion_. A search criterion can be a literal text or one or more search
