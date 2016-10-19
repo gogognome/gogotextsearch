@@ -68,7 +68,7 @@ public class Parser {
             if (currentToken == null) {
                 throw new IllegalArgumentException("Expected criterion after \"NOT\"");
             }
-            return new Not(parseOrCriterion());
+            return new Not(parseSimpleCriterion());
         } else if (currentToken.equals("(")) {
             nextToken(); // skip "("
             if (currentToken == null) {

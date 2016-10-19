@@ -22,8 +22,10 @@ public class ParserTest {
         assertParse("nOt b", "NOT b");
         assertParse("not not a", "NOT NOT a");
         assertParse("NOT (c and d)", "NOT (c AND d)");
+        assertParse("a AND NOT b OR c", "((a AND NOT b) OR c)");
+        assertParse("a AND NOT b c", "((a AND NOT b) AND c)");
 
-        assertParse("a and (b or c) or (not d and e) ", "((a AND (b OR c)) OR NOT (d AND e))");
+        assertParse("a and (b or c) or (not d and e) ", "((a AND (b OR c)) OR (NOT d AND e))");
 
         assertParseShouldFail(null, "No criterion found");
         assertParseShouldFail(" ", "No criterion found");

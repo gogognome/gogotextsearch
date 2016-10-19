@@ -165,3 +165,9 @@ Typical usage:
     // Get matches 100 up to 200 (i.e., skip 100 and next take 200-100 matches)
     List<String> matches2 = searchableTextFile.getLinesMatching(new Parser().parse("'something else'"), 100, 200);
     
+### Releases
+
+| Date              | Release | Description   |
+| ----------------- |:-------:| -----------   |
+| August 10, 2016   | 1.0.0   | Initial release |
+| October 19, 2016  | 1.0.1   | Fixed precedence of NOT operator. Now it has highest precedence |
