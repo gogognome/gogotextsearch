@@ -169,5 +169,6 @@ Typical usage:
 
 | Date              | Release | Description   |
 | ----------------- |:-------:| -----------   |
-| August 10, 2016   | 1.0.0   | Initial release |
-| October 19, 2016  | 1.0.1   | Fixed precedence of NOT operator. Now it has highest precedence |
+| August 10, 2016   | 1.0.0   | Initial release. |
+| October 19, 2016  | 1.0.1   | Fixed precedence of NOT operator. Now it has highest precedence. |
+| October 27, 2016  | 1.0.2   | Added a StringSearch implementation that only matches if the search text equals the text to be searched. |
