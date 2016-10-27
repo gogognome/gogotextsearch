@@ -38,7 +38,7 @@ public class CriterionMatcher {
 
     private final StringSearch stringSearch;
 
-    CriterionMatcher(StringSearch stringSearch) {
+    public CriterionMatcher(StringSearch stringSearch) {
         this.stringSearch = stringSearch;
     }
 
