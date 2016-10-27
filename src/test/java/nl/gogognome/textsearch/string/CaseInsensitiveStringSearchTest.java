@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class CaseInsensitiveCriterionMatcherTest {
+public class CaseInsensitiveStringSearchTest {
 
     @Test
     public void testindexOf() {
