@@ -26,6 +26,24 @@ public class StringSearchFactoryTest {
     }
 
     @Test
+    public void testCaseInsenstiveStringEquals() {
+        StringSearch stringSearch = factory.caseInsensitiveStringEquals();
+        assertNotNull(stringSearch);
+        assertEquals(0, stringSearch.indexOf("A", "a"));
+        assertEquals(0, stringSearch.indexOf("A", "A"));
+        assertEquals(-1, stringSearch.indexOf("A", "AB"));
+    }
+
+    @Test
+    public void testCaseSenstiveStringEquals() {
+        StringSearch stringSearch = factory.caseSensitiveStringEquals();
+        assertNotNull(stringSearch);
+        assertEquals(-1, stringSearch.indexOf("A", "a"));
+        assertEquals(0, stringSearch.indexOf("A", "A"));
+        assertEquals(-1, stringSearch.indexOf("A", "AB"));
+    }
+
+    @Test
     public void testCaseInsensitveCriterionMatcher() {
         CriterionMatcher criterionMatcher = factory.caseInsensitiveCriterionMatcher();
         assertTrue(criterionMatcher.matches(new Parser().parse("A"), "A"));
@@ -37,6 +55,22 @@ public class StringSearchFactoryTest {
         CriterionMatcher criterionMatcher = factory.caseSensitiveCriterionMatcher();
         assertTrue(criterionMatcher.matches(new Parser().parse("A"), "A"));
         assertFalse(criterionMatcher.matches(new Parser().parse("a"), "A"));
+    }
+
+    @Test
+    public void testCaseInsensitveStringEqualsCriterionMatcher() {
+        CriterionMatcher criterionMatcher = factory.caseInsensitiveStringEqualsCriterionMatcher();
+        assertTrue(criterionMatcher.matches(new Parser().parse("A"), "A"));
+        assertTrue(criterionMatcher.matches(new Parser().parse("a"), "A"));
+        assertFalse(criterionMatcher.matches(new Parser().parse("a"), "ab"));
+    }
+
+    @Test
+    public void testCaseSensitveStringEqualsCriterionMatcher() {
+        CriterionMatcher criterionMatcher = factory.caseSensitiveStringEqualsCriterionMatcher();
+        assertTrue(criterionMatcher.matches(new Parser().parse("A"), "A"));
+        assertFalse(criterionMatcher.matches(new Parser().parse("a"), "A"));
+        assertFalse(criterionMatcher.matches(new Parser().parse("a"), "ab"));
     }
 
 }
