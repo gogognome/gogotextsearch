@@ -26,7 +26,7 @@ public class SuffixArrayTextFileSearch implements TextFileSearch {
     private final MultilineString multilineString;
     private final int dataLength;
 
-    SuffixArrayTextFileSearch(String data) {
+    public SuffixArrayTextFileSearch(String data) {
         suffixArray = new SuffixArray(data, false);
         multilineString = new MultilineString(data);
         dataLength = data.length();
