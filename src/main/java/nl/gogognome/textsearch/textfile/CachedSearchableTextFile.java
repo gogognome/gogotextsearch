@@ -33,7 +33,20 @@ public class CachedSearchableTextFile extends BaseSearchableTextFile {
         }
 
         byte[] bytes = Files.readAllBytes(file.toPath());
-        textFileSearch = new SuffixArrayTextFileSearch(new String(bytes, charset));
+        int offset = 0;
+        int length = bytes.length;
+        if (length > 3 && bytes[0] == 0xef && bytes[1] == 0xbb && bytes[2] == 0xbf) {
+            offset = 3;
+            length -= 3;
+        } else if (length > 2 && bytes[0] == 0xfe && bytes[1] == 0xff) {
+            offset = 2;
+            length -= 2;
+        } else if (length > 2 && bytes[0] == 0xff && bytes[1] == 0xfe) {
+            offset = 2;
+            length -= 2;
+        }
+
+        textFileSearch = new SuffixArrayTextFileSearch(new String(bytes, offset, length, charset));
     }
 
     @Override
