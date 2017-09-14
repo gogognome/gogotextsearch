@@ -29,6 +29,7 @@ public class SuffixArrayTest {
         assertEquals(-1, caseSensitiveStringSearch("Royal Blue", "BLUE"));
         assertEquals(-1, caseSensitiveStringSearch("Royal Blue", "BIGLONGSTRING"));
         assertEquals(-1, caseSensitiveStringSearch("Royal Blue", "Royal Blue LONGSTRING"));
+        assertEquals(0, caseSensitiveStringSearch("\nbla\n", "\nbla"));
     }
 
     @Test
@@ -40,6 +41,7 @@ public class SuffixArrayTest {
         assertSearchCaseSensitiveIndexes("aa", "a", 0, 1);
         assertSearchCaseSensitiveIndexes("abba", "a", 0, 3);
         assertSearchCaseSensitiveIndexes("aaaaa", "a", 0, 1, 2, 3, 4);
+        assertSearchCaseSensitiveIndexes("\nbla\n", "\nbla", 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -72,6 +74,7 @@ public class SuffixArrayTest {
         assertEquals(6, caseInsensitiveStringSearch("Royal Blue", "BLUE"));
         assertEquals(-1, caseInsensitiveStringSearch("Royal Blue", "BIGLONGSTRING"));
         assertEquals(-1, caseInsensitiveStringSearch("Royal Blue", "Royal Blue LONGSTRING"));
+        assertEquals(0, caseSensitiveStringSearch("\nbla\n", "\nbla"));
     }
 
     @Test

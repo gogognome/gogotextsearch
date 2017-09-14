@@ -91,7 +91,7 @@ public class SuffixArray {
             index1++;
             index2++;
         }
-        return index1 - index2;
+        return index2 - index1;
     }
 
     private void swap(int index1, int index2) {
