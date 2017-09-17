@@ -6,30 +6,26 @@ package nl.gogognome.textsearch.string;
  */
 class CaseInsensitiveStringSearch implements StringSearch {
 
-    public int indexOf(final String data, final String searchText) {
-        int i = 0;
-        if (data != null && searchText != null) {
-            if (searchText.isEmpty()) {
-                return 0;
-            }
-            int searchStringLength = searchText.length();
-            char[] searchCharLc = new char[searchStringLength];
-            char[] searchCharUc = new char[searchStringLength];
-            searchText.toUpperCase().getChars(0, searchStringLength, searchCharUc, 0);
-            searchText.toLowerCase().getChars(0, searchStringLength, searchCharLc, 0);
-            int j = 0;
-            for (int checkStrLength = data.length(); i < checkStrLength; i++) {
-                char charAt = data.charAt(i);
-                if (charAt == searchCharLc[j] || charAt == searchCharUc[j]) {
-                    if (++j == searchStringLength) {
-                        return i - j + 1;
-                    }
-                } else { // faster than: else if (j != 0) {
-                    i = i - j;
-                    j = 0;
-                }
+    private StringMatcher previousStringMatcher;
+    private String previousPattern;
+    private Object lock = new Object();
+
+    @Override
+    public int indexOf(String text, String pattern) {
+        if (text == null || pattern == null) {
+            return -1;
+        }
+
+        StringMatcher stringMatcher;
+        synchronized (lock) {
+            if (pattern.equals(previousPattern)) {
+                stringMatcher = previousStringMatcher;
+            } else {
+                stringMatcher = new StringMatcher(pattern, true);
+                previousStringMatcher = stringMatcher;
+                previousPattern = pattern;
             }
         }
-        return -1;
+        return stringMatcher.match(text);
     }
 }

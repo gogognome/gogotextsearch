@@ -9,11 +9,11 @@ public class CaseInsensitiveStringEquals implements StringSearch {
     private final CaseInsensitiveStringSearch caseInsensitiveStringSearch = new CaseInsensitiveStringSearch();
 
     @Override
-    public int indexOf(String data, String searchText) {
-        if (data == null || searchText == null || data.length() != searchText.length()) {
+    public int indexOf(String text, String pattern) {
+        if (text == null || pattern == null || text.length() != pattern.length()) {
             return -1;
         }
-        return caseInsensitiveStringSearch.indexOf(data, searchText);
+        return caseInsensitiveStringSearch.indexOf(text, pattern);
     }
 
 }

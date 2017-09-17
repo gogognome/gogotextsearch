@@ -7,7 +7,7 @@ package nl.gogognome.textsearch.string;
 class CaseSensitiveStringEquals implements StringSearch {
 
     @Override
-    public int indexOf(String data, String searchText) {
-        return data != null && searchText != null && data.equals(searchText) ? 0 : -1;
+    public int indexOf(String text, String pattern) {
+        return text != null && pattern != null && text.equals(pattern) ? 0 : -1;
     }
 }

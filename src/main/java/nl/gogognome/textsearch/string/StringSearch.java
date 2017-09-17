@@ -6,11 +6,11 @@ package nl.gogognome.textsearch.string;
 public interface StringSearch {
 
     /**
-     * Gets the index of the first occurrence of <code>searchText</code> in <code>data</code>.
-     * @param data the data to be searched.
-     * @param searchText the text to be found.
-     * @return the index of the first occurrence or -1 if <code>searchText</code> does not occur in <code>data</code>
+     * Gets the index of the first occurrence of <code>pattern</code> in <code>text</code>.
+     * @param text the text to be searched.
+     * @param pattern the text to be found.
+     * @return the index of the first occurrence or -1 if <code>pattern</code> does not occur in <code>text</code>
      *         or if one of the parameters is <code>null</code>
      */
-    int indexOf(String data, String searchText);
+    int indexOf(String text, String pattern);
 }
