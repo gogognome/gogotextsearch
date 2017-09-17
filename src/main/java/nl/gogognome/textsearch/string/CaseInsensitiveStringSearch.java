@@ -12,16 +12,16 @@ class CaseInsensitiveStringSearch implements StringSearch {
             if (searchText.isEmpty()) {
                 return 0;
             }
-            int serchStrLength = searchText.length();
-            char[] searchCharLc = new char[serchStrLength];
-            char[] searchCharUc = new char[serchStrLength];
-            searchText.toUpperCase().getChars(0, serchStrLength, searchCharUc, 0);
-            searchText.toLowerCase().getChars(0, serchStrLength, searchCharLc, 0);
+            int searchStringLength = searchText.length();
+            char[] searchCharLc = new char[searchStringLength];
+            char[] searchCharUc = new char[searchStringLength];
+            searchText.toUpperCase().getChars(0, searchStringLength, searchCharUc, 0);
+            searchText.toLowerCase().getChars(0, searchStringLength, searchCharLc, 0);
             int j = 0;
             for (int checkStrLength = data.length(); i < checkStrLength; i++) {
                 char charAt = data.charAt(i);
                 if (charAt == searchCharLc[j] || charAt == searchCharUc[j]) {
-                    if (++j == serchStrLength) {
+                    if (++j == searchStringLength) {
                         return i - j + 1;
                     }
                 } else { // faster than: else if (j != 0) {
