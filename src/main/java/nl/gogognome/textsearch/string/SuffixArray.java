@@ -44,7 +44,7 @@ public class SuffixArray {
         textLength = this.text.length();
         suffixArray = new int[textLength];
 
-        new sais().suffixsort(text, suffixArray, textLength, caseSensitivity);
+        new sais().suffixSort(text, suffixArray, textLength, caseSensitivity);
     }
 
     /**

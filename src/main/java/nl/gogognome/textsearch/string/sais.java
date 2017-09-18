@@ -90,7 +90,7 @@ public class sais {
         }
     }
 
-    /* find the start or end of each bucket */
+    /** find the start or end of each bucket */
     private static void getCounts(BaseArray T, BaseArray C, int n, int k) {
         int i;
         for (i = 0; i < k; ++i) {
@@ -116,11 +116,11 @@ public class sais {
         }
     }
 
-    /* sort all type LMS suffixes */
+    /** sort all type LMS suffixes */
     private static void LMSsort(BaseArray T, int[] SA, BaseArray C, BaseArray B, int n, int k) {
         int b, i, j;
         int c0, c1;
-    /* compute SAl */
+        // compute SAl
         if (C == B) {
             getCounts(T, C, n, k);
         }
@@ -142,7 +142,7 @@ public class sais {
                 SA[i] = ~j;
             }
         }
-    /* compute SAs */
+        // compute SAs
         if (C == B) {
             getCounts(T, C, n, k);
         }
@@ -165,8 +165,8 @@ public class sais {
         int c0, c1;
         boolean diff;
 
-    /* compact all the sorted substrings into the first m items of SA
-        2*m must be not larger than n (proveable) */
+        /* compact all the sorted substrings into the first m items of SA
+            2*m must be not larger than n (proveable) */
         for (i = 0; (p = SA[i]) < 0; ++i) {
             SA[i] = ~p;
         }
@@ -182,7 +182,7 @@ public class sais {
             }
         }
 
-    /* store the length of all substrings */
+        // store the length of all substrings
         i = n - 1;
         j = n - 1;
         c0 = T.get(n - 1);
@@ -202,7 +202,7 @@ public class sais {
             }
         }
 
-    /* find the lexicographic names of all substrings */
+        // find the lexicographic names of all substrings
         for (i = 0, name = 0, q = n, qlen = 0; i < m; ++i) {
             p = SA[i];
             plen = SA[m + (p >> 1)];
@@ -225,15 +225,15 @@ public class sais {
         return name;
     }
 
-    /* compute SA and BWT */
+    // compute SA and BWT
     private static void induceSA(BaseArray T, int[] SA, BaseArray C, BaseArray B, int n, int k) {
         int b, i, j;
         int c0, c1;
-    /* compute SAl */
+        // compute SAl
         if (C == B) {
             getCounts(T, C, n, k);
         }
-        getBuckets(C, B, k, false); /* find starts of buckets */
+        getBuckets(C, B, k, false); // find starts of buckets
         j = n - 1;
         b = B.get(c1 = T.get(j));
         SA[b++] = ((0 < j) && (T.get(j - 1) < c1)) ? ~j : j;
@@ -248,7 +248,8 @@ public class sais {
                 SA[b++] = ((0 < j) && (T.get(j - 1) < c1)) ? ~j : j;
             }
         }
-    /* compute SAs */
+
+        // compute SAs
         if (C == B) {
             getCounts(T, C, n, k);
         }
@@ -266,55 +267,11 @@ public class sais {
         }
     }
 
-    private static int computeBWT(BaseArray T, int[] SA, BaseArray C, BaseArray B, int n, int k) {
-        int b, i, j, pidx = -1;
-        int c0, c1;
-    /* compute SAl */
-        if (C == B) {
-            getCounts(T, C, n, k);
-        }
-        getBuckets(C, B, k, false); /* find starts of buckets */
-        j = n - 1;
-        b = B.get(c1 = T.get(j));
-        SA[b++] = ((0 < j) && (T.get(j - 1) < c1)) ? ~j : j;
-        for (i = 0; i < n; ++i) {
-            if (0 < (j = SA[i])) {
-                SA[i] = ~(c0 = T.get(--j));
-                if (c0 != c1) {
-                    B.set(c1, b);
-                    b = B.get(c1 = c0);
-                }
-                SA[b++] = ((0 < j) && (T.get(j - 1) < c1)) ? ~j : j;
-            } else if (j != 0) {
-                SA[i] = ~j;
-            }
-        }
-    /* compute SAs */
-        if (C == B) {
-            getCounts(T, C, n, k);
-        }
-        getBuckets(C, B, k, true); /* find ends of buckets */
-        for (i = n - 1, b = B.get(c1 = 0); 0 <= i; --i) {
-            if (0 < (j = SA[i])) {
-                SA[i] = (c0 = T.get(--j));
-                if (c0 != c1) {
-                    B.set(c1, b);
-                    b = B.get(c1 = c0);
-                }
-                SA[--b] = ((0 < j) && (T.get(j - 1) > c1)) ? ~T.get(j - 1) : j;
-            } else if (j != 0) {
-                SA[i] = ~j;
-            } else {
-                pidx = i;
-            }
-        }
-        return pidx;
-    }
-
-    /* find the suffix array SA of T[0..n-1] in {0..k-1}^n
-       use a working space (excluding T and SA) of at most 2n+O(1) for a constant alphabet */
-    private static int
-    SA_IS(BaseArray T, int[] SA, int fs, int n, int k, boolean isbwt) {
+    /**
+     * find the suffix array SA of T[0..n-1] in {0..k-1}^n
+     * use a working space (excluding T and SA) of at most 2n+O(1) for a constant alphabet
+     */
+    private static int SA_IS(BaseArray T, int[] SA, int fs, int n, int k) {
         BaseArray C, B, RA;
         int i, j, b, m, p, q, name, pidx = 0, newfs;
         int c0, c1;
@@ -346,8 +303,8 @@ public class sais {
             flags = 4 | 8;
         }
 
-    /* stage 1: reduce the problem by at least 1/2
-       sort all the LMS-substrings */
+        /* stage 1: reduce the problem by at least 1/2
+           sort all the LMS-substrings */
         getCounts(T, C, n, k);
         getBuckets(C, B, k, true); /* find ends of buckets */
         for (i = 0; i < n; ++i) {
@@ -387,8 +344,8 @@ public class sais {
             name = 0;
         }
 
-    /* stage 2: solve the reduced problem
-       recurse if names are not yet unique */
+        /* stage 2: solve the reduced problem
+            recurse if names are not yet unique */
         if (name < m) {
             if ((flags & 4) != 0) {
                 C = null;
@@ -411,7 +368,7 @@ public class sais {
                 }
             }
             RA = new IntArray(SA, m + newfs);
-            SA_IS(RA, SA, newfs, m, name, false);
+            SA_IS(RA, SA, newfs, m, name);
 
             i = n - 1;
             j = m * 2 - 1;
@@ -442,13 +399,13 @@ public class sais {
             }
         }
 
-    /* stage 3: induce the result for the original problem */
+        // stage 3: induce the result for the original problem
         if ((flags & 8) != 0) {
             getCounts(T, C, n, k);
         }
-    /* put all left-most S characters into their buckets */
+        // put all left-most S characters into their buckets
         if (1 < m) {
-            getBuckets(C, B, k, true); /* find ends of buckets */
+            getBuckets(C, B, k, true); // find ends of buckets
             i = m - 1;
             j = n;
             p = SA[m - 1];
@@ -470,17 +427,11 @@ public class sais {
                 SA[--j] = 0;
             }
         }
-        if (!isbwt) {
-            induceSA(T, SA, C, B, n, k);
-        } else {
-            pidx = computeBWT(T, SA, C, B, n, k);
-        }
+        induceSA(T, SA, C, B, n, k);
         return pidx;
     }
 
-    /* String */
-    public static int
-    suffixsort(String T, int[] SA, int n, CaseSensitivity caseSensitivity) {
+    public static int suffixSort(String T, int[] SA, int n, CaseSensitivity caseSensitivity) {
         if ((T == null) || (SA == null) ||
                 (T.length() < n) || (SA.length < n)) {
             return -1;
@@ -491,7 +442,7 @@ public class sais {
             }
             return 0;
         }
-        return SA_IS(new StringArray(T, 0, caseSensitivity), SA, 0, n, 65536, false);
+        return SA_IS(new StringArray(T, 0, caseSensitivity), SA, 0, n, 65536);
     }
 
 }
