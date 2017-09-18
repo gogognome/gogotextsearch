@@ -5,6 +5,8 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static nl.gogognome.textsearch.CaseSensitivity.INSENSITIVE;
+import static nl.gogognome.textsearch.CaseSensitivity.SENSITIVE;
 import static org.junit.Assert.*;
 
 public class SuffixArrayTest {
@@ -98,34 +100,34 @@ public class SuffixArrayTest {
         caseInsensitiveStringSearch("bla", "");
     }
 
-    private int caseSensitiveStringSearch(String data, String textToFind) {
-        return new SuffixArray(data, true).indexOf(textToFind);
+    private int caseSensitiveStringSearch(String text, String pattern) {
+        return new SuffixArray(text, SENSITIVE).indexOf(pattern);
     }
 
-    private void assertSearchCaseSensitiveIndexes(String data, String textToFind, int... expectedIndexes) {
-        Collection<Integer> actualIndexes = new SuffixArray(data, true).indexesOf(textToFind);
+    private void assertSearchCaseSensitiveIndexes(String text, String pattern, int... expectedIndexes) {
+        Collection<Integer> actualIndexes = new SuffixArray(text, SENSITIVE).indexesOf(pattern);
         assertEquals(Arrays.toString(expectedIndexes), actualIndexes.toString());
     }
 
-    private void assertSearchCaseInsensitiveIndexes(String data, String textToFind, int... expectedIndexes) {
-        Collection<Integer> actualIndexes = new SuffixArray(data, false).indexesOf(textToFind);
+    private void assertSearchCaseInsensitiveIndexes(String text, String pattern, int... expectedIndexes) {
+        Collection<Integer> actualIndexes = new SuffixArray(text, INSENSITIVE).indexesOf(pattern);
         assertEquals(Arrays.toString(expectedIndexes), actualIndexes.toString());
     }
 
-    private int caseInsensitiveStringSearch(String data, String textToFind) {
-        return new SuffixArray(data, false).indexOf(textToFind);
+    private int caseInsensitiveStringSearch(String text, String pattern) {
+        return new SuffixArray(text, INSENSITIVE).indexOf(pattern);
     }
 
     @Test
     public void testToString() {
-        assertEquals("", new SuffixArray("", false).toString());
+        assertEquals("", new SuffixArray("", INSENSITIVE).toString());
 
-        assertEquals("a\n", new SuffixArray("a", false).toString());
+        assertEquals("a\n", new SuffixArray("a", INSENSITIVE).toString());
 
         assertEquals(
                 "ab\n" +
                 "b\n",
-                new SuffixArray("ab", false).toString());
+                new SuffixArray("ab", INSENSITIVE).toString());
 
         assertEquals(
                 "anananas\n" +
@@ -137,22 +139,22 @@ public class SuffixArrayTest {
                 "nanas\n" +
                 "nas\n" +
                 "s\n",
-                new SuffixArray("banananas", false).toString());
+                new SuffixArray("banananas", INSENSITIVE).toString());
     }
 
     @Test
     public void testSubstring() {
-        assertEquals("cd", new SuffixArray("abcde", false).substring(2, 4));
-        assertEquals("abcde", new SuffixArray("abcde", true).substring(0, 5));
-        assertEquals("ABCDE", new SuffixArray("ABCDE", true).substring(0, 5));
+        assertEquals("cd", new SuffixArray("abcde", INSENSITIVE).substring(2, 4));
+        assertEquals("abcde", new SuffixArray("abcde", SENSITIVE).substring(0, 5));
+        assertEquals("ABCDE", new SuffixArray("ABCDE", SENSITIVE).substring(0, 5));
 
         assertSubstringShouldFail("abcde", 3, 2);
         assertSubstringShouldFail("abcde", -1, 2);
         assertSubstringShouldFail("abcde", 0, 6);
     }
 
-    private void assertSubstringShouldFail(String data, int startIndex, int endIndex) {
-        SuffixArray suffixArray = new SuffixArray(data, false);
+    private void assertSubstringShouldFail(String text, int startIndex, int endIndex) {
+        SuffixArray suffixArray = new SuffixArray(text, INSENSITIVE);
         try {
             suffixArray.substring(startIndex, endIndex);
             fail("Expected exception was not thrown!");

@@ -6,6 +6,8 @@ import nl.gogognome.textsearch.string.SuffixArray;
 import java.util.Iterator;
 import java.util.List;
 
+import static nl.gogognome.textsearch.CaseSensitivity.INSENSITIVE;
+
 /**
  * <p>This class is intended for searching a file multiple times. Its constructor expects a String
  * of the file's contents. Next call {@link #matchesIterator(Criterion)}}  with a {@link Criterion} as often as
@@ -26,10 +28,10 @@ public class SuffixArrayTextFileSearch implements TextFileSearch {
     private final MultilineString multilineString;
     private final int dataLength;
 
-    SuffixArrayTextFileSearch(String data) {
-        suffixArray = new SuffixArray(data, false);
-        multilineString = new MultilineString(data);
-        dataLength = data.length();
+    SuffixArrayTextFileSearch(String text) {
+        suffixArray = new SuffixArray(text, INSENSITIVE);
+        multilineString = new MultilineString(text);
+        dataLength = text.length();
     }
 
     @Override

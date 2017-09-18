@@ -11,11 +11,12 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 
+import static nl.gogognome.textsearch.CaseSensitivity.INSENSITIVE;
 import static org.junit.Assert.*;
 
 public class CachedSearchableTextFileTest {
 
-    private final static String DATA = "bla bloep bla";
+    private final static String TEXT = "bla bloep bla";
     private final static Charset CHARSET = Charset.forName("UTF-8");
     private File file;
 
@@ -25,7 +26,7 @@ public class CachedSearchableTextFileTest {
         if (file.exists()) {
             assertTrue(file.delete());
         }
-        Files.write(file.toPath(), DATA.getBytes(CHARSET), StandardOpenOption.CREATE_NEW);
+        Files.write(file.toPath(), TEXT.getBytes(CHARSET), StandardOpenOption.CREATE_NEW);
     }
 
     @After
@@ -71,7 +72,7 @@ public class CachedSearchableTextFileTest {
 
         assertNotNull(searchableTextFile.textFileSearch);
         // A trick: use the toString() of the TextFileSearch to assert it was initialized correctly
-        assertEquals("SuffixArrayTextFileSearch with data: " + new SuffixArray(DATA, false),
+        assertEquals("SuffixArrayTextFileSearch with data: " + new SuffixArray(TEXT, INSENSITIVE),
                 searchableTextFile.textFileSearch.toString());
     }
 }
