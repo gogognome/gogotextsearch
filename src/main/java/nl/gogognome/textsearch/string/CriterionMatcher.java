@@ -2,6 +2,8 @@ package nl.gogognome.textsearch.string;
 
 import nl.gogognome.textsearch.criteria.*;
 
+import java.util.function.BiPredicate;
+
 /**
  * <p>This class checks whether a {@link Criterion} matches a specified String.</p>
  *
@@ -16,7 +18,7 @@ import nl.gogognome.textsearch.criteria.*;
  *
  * <p>A special use case is that the {@link Criterion} must be matched against a number of attributes of an object.
  * This could be implemented by joining these attributes' values to a single string, separated by a character
-  * that does not occur in the `Criterion`, and then matching
+ * that does not occur in the `Criterion`, and then matching
  * the {@link Criterion} against this resulting string. This approach however would require a lot of string copying
  * which is time consuming and produces a lot of gargabe on the heap. To overcome this problem
  * the method {@link CriterionMatcher#matches(Criterion, String...)} accepts a varargs string argument.
@@ -36,10 +38,10 @@ import nl.gogognome.textsearch.criteria.*;
  */
 public class CriterionMatcher {
 
-    private final StringSearch stringSearch;
+    private final BiPredicate<String, String> stringMatchesLiteral;
 
-    public CriterionMatcher(StringSearch stringSearch) {
-        this.stringSearch = stringSearch;
+    public CriterionMatcher(BiPredicate<String, String> stringMatchesLiteral) {
+        this.stringMatchesLiteral = stringMatchesLiteral;
     }
 
     public boolean matches(Criterion criterion, String... textElements) {
@@ -59,7 +61,7 @@ public class CriterionMatcher {
 
     private boolean matchesAny(StringLiteral criterion, String... textElements) {
         for (String textElement : textElements) {
-            if (stringSearch.indexOf(textElement, criterion.getLiteral()) != -1) {
+            if (stringMatchesLiteral.test(textElement, criterion.getLiteral())) {
                 return true;
             }
         }

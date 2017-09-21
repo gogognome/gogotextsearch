@@ -15,6 +15,9 @@ public class StringSearchFactoryTest {
         assertNotNull(stringSearch);
         assertEquals(0, stringSearch.indexOf("A", "a"));
         assertEquals(0, stringSearch.indexOf("A", "A"));
+        assertTrue(stringSearch.equals("A", "a"));
+        assertTrue(stringSearch.equals("A", "A"));
+        assertFalse(stringSearch.equals("A", "AB"));
     }
 
     @Test
@@ -23,24 +26,9 @@ public class StringSearchFactoryTest {
         assertNotNull(stringSearch);
         assertEquals(-1, stringSearch.indexOf("A", "a"));
         assertEquals(0, stringSearch.indexOf("A", "A"));
-    }
-
-    @Test
-    public void testCaseInsenstiveStringEquals() {
-        StringSearch stringSearch = factory.caseInsensitiveStringEquals();
-        assertNotNull(stringSearch);
-        assertEquals(0, stringSearch.indexOf("A", "a"));
-        assertEquals(0, stringSearch.indexOf("A", "A"));
-        assertEquals(-1, stringSearch.indexOf("A", "AB"));
-    }
-
-    @Test
-    public void testCaseSenstiveStringEquals() {
-        StringSearch stringSearch = factory.caseSensitiveStringEquals();
-        assertNotNull(stringSearch);
-        assertEquals(-1, stringSearch.indexOf("A", "a"));
-        assertEquals(0, stringSearch.indexOf("A", "A"));
-        assertEquals(-1, stringSearch.indexOf("A", "AB"));
+        assertFalse(stringSearch.equals("A", "a"));
+        assertTrue(stringSearch.equals("A", "A"));
+        assertFalse(stringSearch.equals("A", "AB"));
     }
 
     @Test

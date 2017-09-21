@@ -1,67 +1,73 @@
 package nl.gogognome.textsearch.string;
 
+import nl.gogognome.textsearch.CaseSensitivity;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static nl.gogognome.textsearch.CaseSensitivity.INSENSITIVE;
+import static nl.gogognome.textsearch.CaseSensitivity.SENSITIVE;
+
 /**
- * This class searches for occurrences of a pattern in a string. It uses the Boyer Moore algorithm,
- * which is more efficient than {@link String#contains(CharSequence)}. It even allows to search for the pattern
- * ignoring the case.
+ * This class searches for occurrences of a pattern in a text. It uses the Boyer Moore algorithm,
+ * which is more efficient than {@link String#contains(CharSequence)}.
  */
-public class StringMatcher {
+public class BoyerMoore implements SearchForFixedPattern {
 
     private final String pattern;
-    private final boolean ignoreCase;
+    private final CaseSensitivity caseSensitivity;
 
     private final int[] last = new int[Character.MAX_VALUE];
     private int[] match;
     private int[] suffix;
 
     /**
-     * Constructs a string matcher for the specified pattern.
+     * Constructs an instance to for the specified fixed pattern.
      *
-     * @param pattern
-     *            the pattern
+     * @param pattern the pattern
      */
-    public StringMatcher(String pattern) {
-        this(pattern, false);
+    public BoyerMoore(String pattern) {
+        this(pattern, SENSITIVE);
     }
 
     /**
-     * Constructs a string matcher for the specified pattern.
+     * Constructs an instance to for the specified fixed pattern.
      *
-     * @param pattern
-     *            the pattern
-     * @param ignoreCase
-     *            <code>true</code> if case should be ignored during matchin; <code>false</code> otherwise
+     * @param pattern the pattern
+     * @param caseSensitivity case sensitivity of the search
      */
-    public StringMatcher(String pattern, boolean ignoreCase) {
+    public BoyerMoore(String pattern, CaseSensitivity caseSensitivity) {
         this.pattern = pattern;
-        this.ignoreCase = ignoreCase;
+        this.caseSensitivity = caseSensitivity;
 
         if (!pattern.isEmpty()) {
-            // Preprocessing
             computeLast();
             computeMatch();
         }
     }
 
-    /**
-     * Searches the pattern in the text. returns the position of the first occurrence, if found and -1 otherwise.
-     *
-     * @param text
-     *            the text
-     */
-    public int match(String text) {
-        return match(text, 0);
+    @Override
+    public int indexOf(String text) {
+        return indexOf(text, 0);
     }
 
-    /**
-     * Searches the pattern in the text. returns the position of the first occurrence, if found and -1 otherwise.
-     *
-     * @param text
-     *            the text
-     * @param startIndex
-     *            start the search at this index
-     */
-    public int match(String text, int startIndex) {
+    @Override
+    public List<Integer> indexesOf(String text) {
+        List<Integer> indexes = new ArrayList<>();
+        int startIndex = 0;
+        while (true) {
+            int index = indexOf(text, startIndex);
+            if (index == -1) {
+                break;
+            }
+            indexes.add(index);
+            startIndex = index + 1;
+        }
+        return indexes;
+    }
+
+    @Override
+    public int indexOf(String text, int startIndex) {
         if (pattern.isEmpty()) {
             return 0;
         }
@@ -94,7 +100,7 @@ public class StringMatcher {
         }
         for (int j = pattern.length() - 1; j >= 0; j--) {
             char c = pattern.charAt(j);
-            if (ignoreCase) {
+            if (caseSensitivity == INSENSITIVE) {
                 char lc = Character.toLowerCase(c);
                 if (last[lc] < 0) {
                     last[lc] = j;
@@ -191,19 +197,14 @@ public class StringMatcher {
     }
 
     /**
-     * Checks whether two chars are equal, taking into account the value of {@link #ignoreCase}.
+     * Checks whether two chars are equal, taking into account the value of {@link #caseSensitivity}.
      *
-     * @param c
-     *            a char
-     * @param d
-     *            a char
+     * @param c a char
+     * @param d a char
      * @return <code>true</code> if the chars are equal; <code>false</code> otherwise
      */
     private boolean charEqual(char c, char d) {
-        if (ignoreCase) {
-            return c == d || Character.toLowerCase(c) == Character.toLowerCase(d);
-        } else {
-            return c == d;
-        }
+        return c == d || (caseSensitivity == INSENSITIVE && Character.toLowerCase(c) == Character.toLowerCase(d));
     }
+
 }

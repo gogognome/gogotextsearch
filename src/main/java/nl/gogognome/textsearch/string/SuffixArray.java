@@ -74,21 +74,21 @@ public class SuffixArray {
     }
 
     /**
-     * Gets indexes of all occurrence of <code>searchString</code> in the text.
-     * @param searchString the text to be found
-     * @return a list of indexes of all occurrence of <code>searchString</code>. The indexes are sorted increasingly.
+     * Gets indexes of all occurrence of <code>pattern</code> in the text.
+     * @param pattern the text to be found
+     * @return a list of indexes of all occurrence of <code>pattern</code>. The indexes are sorted increasingly.
      *         Never returns <code>null</code>. If no occurrences are present, an empty list is returned.
      */
-    public List<Integer> indexesOf(String searchString) {
-        validateSearchString(searchString);
+    public List<Integer> indexesOf(String pattern) {
+        validateSearchString(pattern);
 
-        if (searchString.length() > textLength) {
+        if (pattern.length() > textLength) {
             return Collections.emptyList();
         }
 
         List<Integer> indexes = new ArrayList<>();
-        int suffixArrayIndex = findFirstMatch(searchString);
-        while (suffixArrayIndex >= 0 && matchesAtSuffixArrayIndex(searchString, suffixArray[suffixArrayIndex])) {
+        int suffixArrayIndex = findFirstMatch(pattern);
+        while (suffixArrayIndex >= 0 && matchesAtSuffixArrayIndex(pattern, suffixArray[suffixArrayIndex])) {
             indexes.add(suffixArray[suffixArrayIndex]);
             suffixArrayIndex--;
         }
@@ -96,8 +96,8 @@ public class SuffixArray {
         return indexes;
     }
 
-    private void validateSearchString(String searchString) {
-        if (searchString == null || searchString.isEmpty()) {
+    private void validateSearchString(String pattern) {
+        if (pattern == null || pattern.isEmpty()) {
             throw new IllegalArgumentException("The search string must not a non eempty string");
         }
     }

@@ -1,5 +1,8 @@
 package nl.gogognome.textsearch.string;
 
+import static nl.gogognome.textsearch.CaseSensitivity.INSENSITIVE;
+import static nl.gogognome.textsearch.CaseSensitivity.SENSITIVE;
+
 /**
  * A factory class for creating {@link StringSearch} and {@link CriterionMatcher} instances.
  */
@@ -9,42 +12,30 @@ public class StringSearchFactory {
      * @return creates a @{@link StringSearch} that is case sensitive
      */
     public StringSearch caseSensitiveStringSearch() {
-        return new CaseSensitiveStringSearch();
+        return new FastStringSearch(SENSITIVE);
     }
 
     /**
      * @return creates a @{@link StringSearch} that is case insensitive
      */
     public StringSearch caseInsensitiveStringSearch() {
-        return new CaseInsensitiveStringSearch();
-    }
-
-    /**
-     * @return creates a @{@link StringSearch} that is case sensitive
-     */
-    public StringSearch caseSensitiveStringEquals() {
-        return new CaseSensitiveStringEquals();
-    }
-
-    /**
-     * @return creates a @{@link StringSearch} that is case insensitive
-     */
-    public StringSearch caseInsensitiveStringEquals() {
-        return new CaseInsensitiveStringEquals();
+        return new FastStringSearch(INSENSITIVE);
     }
 
     /**
      * @return creates a @{@link CriterionMatcher} that is case sensitive
      */
     public CriterionMatcher caseSensitiveCriterionMatcher() {
-        return new CriterionMatcher(caseSensitiveStringSearch());
+        StringSearch stringSearch = caseSensitiveStringSearch();
+        return new CriterionMatcher((text, literal) -> stringSearch.indexOf(text, literal) != -1);
     }
 
     /**
      * @return creates a @{@link CriterionMatcher} that is case insensitive
      */
     public CriterionMatcher caseInsensitiveCriterionMatcher() {
-        return new CriterionMatcher(caseInsensitiveStringSearch());
+        StringSearch stringSearch = caseInsensitiveStringSearch();
+        return new CriterionMatcher((text, literal) -> stringSearch.indexOf(text, literal) != -1);
     }
 
 
@@ -52,14 +43,16 @@ public class StringSearchFactory {
      * @return creates a @{@link CriterionMatcher} that is case sensitive
      */
     public CriterionMatcher caseSensitiveStringEqualsCriterionMatcher() {
-        return new CriterionMatcher(caseSensitiveStringEquals());
+        StringSearch stringSearch = caseSensitiveStringSearch();
+        return new CriterionMatcher((text, literal) -> stringSearch.equals(text, literal));
     }
 
     /**
      * @return creates a @{@link CriterionMatcher} that is case insensitive
      */
     public CriterionMatcher caseInsensitiveStringEqualsCriterionMatcher() {
-        return new CriterionMatcher(caseInsensitiveStringEquals());
+        StringSearch stringSearch = caseInsensitiveStringSearch();
+        return new CriterionMatcher((text, literal) -> stringSearch.equals(text, literal));
     }
 
 }

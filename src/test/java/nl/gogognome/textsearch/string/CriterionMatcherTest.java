@@ -8,11 +8,12 @@ import static org.junit.Assert.*;
 
 public class CriterionMatcherTest {
 
-    private final StringSearchFactory stringSearchFactory = new StringSearchFactory();
+    private final CriterionMatcher caseSensitiveCriterionMatcher = new StringSearchFactory().caseSensitiveCriterionMatcher();
+    private final CriterionMatcher caseInsensitiveCriterionMatcher = new StringSearchFactory().caseInsensitiveCriterionMatcher();
 
     @Test(expected = IllegalArgumentException.class)
     public void whenUnknownCriterionImplementationIsPassedThenMatchesShouldThrowException() {
-        new CriterionMatcher(stringSearchFactory.caseSensitiveStringSearch()).matches(Mockito.mock(Criterion.class), "bladiebla");
+        caseSensitiveCriterionMatcher.matches(Mockito.mock(Criterion.class), "bladiebla");
     }
 
     @Test
@@ -31,11 +32,11 @@ public class CriterionMatcherTest {
     }
 
     private void assertMatchesCaseSensitive(String text, Criterion criterion) {
-        assertTrue(new CriterionMatcher(stringSearchFactory.caseSensitiveStringSearch()).matches(criterion, text));
+        assertTrue(caseSensitiveCriterionMatcher.matches(criterion, text));
     }
 
     private void assertNotMatchesCaseSensitive(String text, Criterion criterion) {
-        assertFalse(new CriterionMatcher(stringSearchFactory.caseSensitiveStringSearch()).matches(criterion, text));
+        assertFalse(caseSensitiveCriterionMatcher.matches(criterion, text));
     }
 
     @Test
@@ -70,10 +71,10 @@ public class CriterionMatcherTest {
     }
 
     private void assertMatchesCaseInsensitive(Criterion criterion, String... text) {
-        assertTrue(new CriterionMatcher(stringSearchFactory.caseInsensitiveStringSearch()).matches(criterion, text));
+        assertTrue(caseInsensitiveCriterionMatcher.matches(criterion, text));
     }
 
     private void assertNotMatchesCaseInsensitive(Criterion criterion, String... text) {
-        assertFalse(new CriterionMatcher(stringSearchFactory.caseInsensitiveStringSearch()).matches(criterion, text));
+        assertFalse(caseInsensitiveCriterionMatcher.matches(criterion, text));
     }
 }
