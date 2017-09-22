@@ -47,16 +47,16 @@ public class BoyerMoore implements SearchForFixedPattern {
     }
 
     @Override
-    public int indexOf(String text) {
-        return indexOf(text, 0);
+    public int indexIn(String text) {
+        return indexIn(text, 0);
     }
 
     @Override
-    public List<Integer> indexesOf(String text) {
+    public List<Integer> indexesIn(String text) {
         List<Integer> indexes = new ArrayList<>();
         int startIndex = 0;
         while (true) {
-            int index = indexOf(text, startIndex);
+            int index = indexIn(text, startIndex);
             if (index == -1) {
                 break;
             }
@@ -67,7 +67,7 @@ public class BoyerMoore implements SearchForFixedPattern {
     }
 
     @Override
-    public int indexOf(String text, int startIndex) {
+    public int indexIn(String text, int startIndex) {
         if (pattern.isEmpty()) {
             return 0;
         }
@@ -118,8 +118,8 @@ public class BoyerMoore implements SearchForFixedPattern {
     }
 
     /**
-     * Computes the function match and stores its values in the array match. match(j) = min{ s | 0 < s <= j && p[j-s]!=p[j] && p[j-s+1]..p[m-s-1] is suffix of
-     * p[j+1]..p[m-1] }, if such s exists, else min{ s | j+1 <= s <= m && p[0]..p[m-s-1] is suffix of p[j+1]..p[m-1] }, if such s exists, m, otherwise, where p
+     * Computes the function match and stores its values in the array match. match(j) = min{ s | 0 < s <= j && p[j-s]!=p[j] && p[j-s+1]..p[m-s-1] is a suffix of
+     * p[j+1]..p[m-1] }, if such s exists, else min{ s | j+1 <= s <= m && p[0]..p[m-s-1] is a suffix of p[j+1]..p[m-1] }, if such s exists, m, otherwise, where p
      * is the pattern and m is its length.
      */
     private void computeMatch() {

@@ -14,7 +14,7 @@ public interface SearchForFixedPattern {
      * @return the index of the first occurrence or -1 if <code>pattern</code> does not occur in the text.
      * or if one of the parameters is <code>null</code>
      */
-    int indexOf(String text);
+    int indexIn(String text);
 
     /**
      * Gets the index of the first occurrence of the pattern in <code>text</code> with index equal to or larger
@@ -25,7 +25,7 @@ public interface SearchForFixedPattern {
      * @return the index of the first occurrence or -1 if <code>pattern</code> does not occur in the text.
      * or if one of the parameters is <code>null</code>
      */
-    int indexOf(String text, int startIndex);
+    int indexIn(String text, int startIndex);
 
     /**
      * Gets indexes of all occurrences of the pattern in <code>text</code>.
@@ -34,5 +34,5 @@ public interface SearchForFixedPattern {
      * @return a list of indexes of all occurrence of the pattern. The indexes are sorted increasingly.
      * Never returns <code>null</code>. If no occurrences are present, an empty list is returned.
      */
-    List<Integer> indexesOf(String text);
+    List<Integer> indexesIn(String text);
 }

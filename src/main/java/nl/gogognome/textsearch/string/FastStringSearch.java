@@ -92,7 +92,7 @@ public class FastStringSearch implements StringSearch {
             previousStringMatcher = stringMatcher;
             previousPattern = pattern;
         }
-        return stringMatcher.indexOf(text, startIndex);
+        return stringMatcher.indexIn(text, startIndex);
     }
 
     private int indexOfCaseInsensitve(String text, String pattern, int startIndex) {

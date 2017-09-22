@@ -17,11 +17,13 @@ import java.util.function.BiPredicate;
  * </pre>
  *
  * <p>A special use case is that the {@link Criterion} must be matched against a number of attributes of an object.
+ * For example, you want to match the {@link Criterion} against the first name, last name, street and city of
+ * relations.
  * This could be implemented by joining these attributes' values to a single string, separated by a character
  * that does not occur in the `Criterion`, and then matching
  * the {@link Criterion} against this resulting string. This approach however would require a lot of string copying
- * which is time consuming and produces a lot of gargabe on the heap. To overcome this problem
- * the method {@link CriterionMatcher#matches(Criterion, String...)} accepts a varargs string argument.
+ * which is time consuming and produces a lot of garbage on the heap. To overcome this problem
+ * the method {@link CriterionMatcher#matches(Criterion, String...)} has a varargs string parameter.
  * The strings passed to the method are treated as if they were all joined together to a single string, separated
  * by a character that does not occur in the {@link Criterion}.
  * </p>
