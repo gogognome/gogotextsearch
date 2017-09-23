@@ -12,7 +12,7 @@ public class FastStringSearch implements StringSearch {
     private final CaseSensitivity caseSensitivity;
     private BoyerMoore previousStringMatcher;
     private String previousPattern;
-    private long smallTextLimit = 100_000L;
+    private long smallTextLimit = 80_000L;
 
     public FastStringSearch(CaseSensitivity caseSensitivity) {
         this.caseSensitivity = caseSensitivity;
@@ -73,7 +73,7 @@ public class FastStringSearch implements StringSearch {
 
     @Override
     public int indexOf(String text, String pattern, int startIndex) {
-        if (text == null || pattern == null) {
+        if (text == null || pattern == null || startIndex > text.length()) {
             return -1;
         }
 

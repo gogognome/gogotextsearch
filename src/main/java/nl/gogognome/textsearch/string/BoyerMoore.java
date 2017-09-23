@@ -68,6 +68,17 @@ public class BoyerMoore implements SearchForFixedPattern {
 
     @Override
     public int indexIn(String text, int startIndex) {
+        if (startIndex > text.length()) {
+            return -1;
+        }
+        if (pattern.isEmpty()) {
+            return startIndex;
+        }
+
+        if (text.length() - startIndex < pattern.length()) {
+            return -1;
+        }
+
         if (pattern.isEmpty()) {
             return startIndex < text.length() ? startIndex : -1;
         }

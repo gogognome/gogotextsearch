@@ -2,6 +2,8 @@ package nl.gogognome.textsearch.string;
 
 import org.junit.Test;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static nl.gogognome.textsearch.CaseSensitivity.INSENSITIVE;
 import static nl.gogognome.textsearch.CaseSensitivity.SENSITIVE;
 import static org.junit.Assert.assertEquals;
@@ -44,6 +46,25 @@ public class FastStringSearchTest {
         assertEquals(6, fastStringSearch.indexOf("Royal Blue", "BLUE"));
         assertEquals(-1, fastStringSearch.indexOf("Royal Blue", "BIGLONGSTRING"));
         assertEquals(-1, fastStringSearch.indexOf("Royal Blue", "Royal Blue LONGSTRING"));
+
+        assertEquals(emptyList(), fastStringSearch.indexesOf("bla", "bananas"));
+        assertEquals(asList(0), fastStringSearch.indexesOf("bananas", "bananas"));
+        assertEquals(asList(0, 8), fastStringSearch.indexesOf("bananas bAnAnAs", "bananas"));
+        assertEquals(asList(0, 8, 16), fastStringSearch.indexesOf("bananas BANANAS bananas", "bananas"));
+
+        assertEquals(asList(0, 8, 16), fastStringSearch.indexesOf("bananas BANANAS bananas", "bananas"));
+
+        assertEquals(asList(0, 1, 2, 3, 4, 5), fastStringSearch.indexesOf("aAaAaAa", "aa"));
+        assertEquals(asList(0, 1, 2, 3, 4, 5, 6, 7), fastStringSearch.indexesOf("aaaaaaa", ""));
+
+        assertEquals(0, fastStringSearch.indexOf("bla BLA", "bla", 0));
+        assertEquals(4, fastStringSearch.indexOf("bla BLA", "bla", 1));
+        assertEquals(-1, fastStringSearch.indexOf("bla BLA", "bla", 5));
+        assertEquals(-1, fastStringSearch.indexOf("bla BLA", "bla", 7));
+        assertEquals(0, fastStringSearch.indexOf("bla bla", "", 0));
+        assertEquals(6, fastStringSearch.indexOf("bla bla", "", 6));
+        assertEquals(7, fastStringSearch.indexOf("bla bla", "", 7));
+        assertEquals(-1, fastStringSearch.indexOf("bla bla", "", 8));
     }
 
     @Test
@@ -82,6 +103,26 @@ public class FastStringSearchTest {
         assertEquals(-1, fastStringSearch.indexOf("Royal Blue", "BLUE"));
         assertEquals(-1, fastStringSearch.indexOf("Royal Blue", "BIGLONGSTRING"));
         assertEquals(-1, fastStringSearch.indexOf("Royal Blue", "Royal Blue LONGSTRING"));
+
+        assertEquals(emptyList(), fastStringSearch.indexesOf("bananas", "bla"));
+        assertEquals(asList(0), fastStringSearch.indexesOf("bananas", "bananas"));
+        assertEquals(asList(0, 8), fastStringSearch.indexesOf("bananas bananas", "bananas"));
+        assertEquals(asList(0, 8, 16), fastStringSearch.indexesOf("bananas bananas bananas", "bananas"));
+        assertEquals(asList(0, 16), fastStringSearch.indexesOf("bananas BANANAS bananas", "bananas"));
+
+        assertEquals(asList(0, 16), fastStringSearch.indexesOf("bananas BANANAS bananas", "bananas"));
+
+        assertEquals(asList(0, 1, 2, 3, 4, 5), fastStringSearch.indexesOf("aaaaaaa", "aa"));
+        assertEquals(asList(0, 1, 2, 3, 4, 5, 6, 7), fastStringSearch.indexesOf("aaaaaaa", ""));
+
+        assertEquals(0, fastStringSearch.indexOf("bla bla", "bla", 0));
+        assertEquals(4, fastStringSearch.indexOf("bla bla", "bla", 1));
+        assertEquals(-1, fastStringSearch.indexOf("bla bla", "bla", 5));
+        assertEquals(-1, fastStringSearch.indexOf("bla bla", "bla", 7));
+        assertEquals(0, fastStringSearch.indexOf("bla bla", "", 0));
+        assertEquals(6, fastStringSearch.indexOf("bla bla", "", 6));
+        assertEquals(7, fastStringSearch.indexOf("bla bla", "", 7));
+        assertEquals(-1, fastStringSearch.indexOf("bla bla", "", 8));
     }
 
 }
