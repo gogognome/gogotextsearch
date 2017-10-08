@@ -28,7 +28,7 @@ public class SuffixArrayTextFileSearch implements TextFileSearch {
     private final MultilineString multilineString;
     private final int dataLength;
 
-    SuffixArrayTextFileSearch(String text) {
+    public SuffixArrayTextFileSearch(String text) {
         suffixArray = new SuffixArray(text, INSENSITIVE);
         multilineString = new MultilineString(text);
         dataLength = text.length();
@@ -44,7 +44,7 @@ public class SuffixArrayTextFileSearch implements TextFileSearch {
         private final Iterator<Range> rangeSetIterator;
         private Range currentRange;
 
-        public MatchesIterator(Iterator<Range> rangeSetIterator) {
+        MatchesIterator(Iterator<Range> rangeSetIterator) {
             this.rangeSetIterator = rangeSetIterator;
             if (rangeSetIterator.hasNext()) {
                 currentRange = rangeSetIterator.next();

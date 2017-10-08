@@ -37,7 +37,7 @@ public class OneOffTextFileSearch implements TextFileSearch {
     private final CriterionMatcher criterionMatcher;
     private BufferedReader bufferedReader;
 
-    OneOffTextFileSearch(InputStream inputStream, Charset charset, CriterionMatcher criterionMatcher) {
+    public OneOffTextFileSearch(InputStream inputStream, Charset charset, CriterionMatcher criterionMatcher) {
         this.criterionMatcher = criterionMatcher;
         bufferedReader = new BufferedReader(new InputStreamReader(inputStream, charset));
     }
