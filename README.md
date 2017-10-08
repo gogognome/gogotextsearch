@@ -1,45 +1,8 @@
 # gogo text search
 Simple library for searching text in strings using expressions like "foo and bar and not (blub or blob)"
+and for searching large texts fast.
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/nl.gogognome/gogotextsearch/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/nl.gogognome/gogotextsearch)
-
-## Search criterion
-
-What is searched for is defined by a _search criterion_. A search criterion can be a literal text or one or more search
-criteria combined using AND, OR and NOT operators.
-
-### Examples
-
-`foo` matches any line containing the literal text `foo`.
-
-`foo AND bar` matches any line containing both literals `foo` and `bar`. The order in which `foo` and `bar` are
- present in the matching line is unimportant.
-
-The keyword AND is optional: `foo bar` is equivalent too `foo AND bar`.
-
-To match the exact literal `foo bar` put it between single or double quotes: both `'foo bar'` and `"foo bar"` match
-any line containing the exact literal `foo bar`.
-
-`foo OR bar` matches any line containing at leat one of the literals `foo` and `bar`. 
-
-`not foo` matches any line that does not contain `foo`.
-
-Use brackets to group parts of the criterion: `(foo OR bar) AND (blob OR blub)`.
-
-The keywords `AND`, `OR` and `NOT` are case insensitive.
-
-### The Criterion interface and Parser class
-
-THe package nl.gogognome.textsearch.criteria contains the `Criterion` interface and classes implementing this interface:
-
-* StringLiteral
-* And
-* Or
-* Not
-
-You can use these classes to build search criteria, but the easiest way is to use the `Parser` class:
-
-    Criterion searchCriterion = new Parser().parse("foo AND bar"); 
 
 ## String search
 
@@ -58,29 +21,102 @@ If you are looking for an implementation of `String.indexOf()` that is case inse
 you can do this:
 
     StringSearch stringSearch = new StringSearchFactory().caseInsensitiveStringSearch();
-    int index = stringSearch.indexOfIgnoreCase("Barefoot is a movie directed by Andrew Flemming.", "Foot");
+    int index = stringSearch.indexOf("Barefoot is a movie directed by Andrew Flemming.", "Foot");
     // index == 4
 
-For a case senstive implementation use `new StringSearchFactory().caseSensitiveStringSearch()` instead. Under the
-hood the implementation for case sensitive search uses `String.indexOf()`. It is still useful to have both
-case senstive and case insensitive implementations, because both are used by the criterion matcher for case sensitive
-and case insensitive matching of search criteria.
+The `StringSearch` interface also offers methods to start searching from a specific index in the text onwards and 
+a method to find all indexes where the pattern occurs in the text. 
 
-### Search for indexes of a search string using Suffix Arrays
+    List<Integer> indexes = stringSearch.indexesOf("Barefoot is a movie directed by Andrew Flemming.", "re");
+    // indexes == [2, 22, 35]
+
+For a case sensitive implementation of `StringSearch` use `new StringSearchFactory().caseSensitiveStringSearch()` 
+instead. Under the hood the implementation for case sensitive search uses `String.indexOf()`.
+It is still useful to have both case senstive and case insensitive implementations, because both are used by 
+the criterion matcher for case sensitive and case insensitive matching of search criteria.
+
+### Search for indexes of a pattern using Boyer Moore
+
+To search large texts, a faster algorithm to use is the Boyer Moore algorithm. This algorithm
+requires a little time to initialize a few arrays based on the pattern. After that, searching is many times faster
+than `String.indexOf()`.
+
+    BoyerMoore boyerMoore = new BoyerMoore("Foot", CaseSensitivity.INSENSITIVE);
+    int index = boyerMoore.indexIn("Barefoot is a movie directed by Andrew Flemming.");
+    // index == 4
+
+The class `BoyerMoore` also offers methods to start searching from a specific index in the text onwards and a method
+to find all indexes where the pattern occurs in the text.     
+
+    BoyerMoore boyerMoore = new BoyerMoore("re", CaseSensitivity.INSENSITIVE);
+    List<Integer> indexes = boyerMoore.indexesIn("Barefoot is a movie directed by Andrew Flemming.");
+    // indexes == [2, 22, 35]
+
+The StringSearch implementation returned by the `StringSearchFactory` wil actually switch from `String.indexOf()`
+to Boyer-Moore if the text is larger than a certain threshold.
+
+### Search for indexes of a pattern using Suffix Arrays
 
 If you want to find the index of different string literals in one string again and again the for large strings,
 it is more efficient to use a _suffix array_ than the search string solutions of the previous section. 
 A suffix array is a technique to quickly generate a kind of lookup table for the
 string using very little extra memory. You can use it like this:
 
-    boolean caseSensitive = true;
-    SuffixArray suffixArray = new SuffixArray("bla blop bla", caseSensitive);
-    int index = suffixArray.indexOf("blop");
+    BoyerMoore boyerMoore = new BoyerMoore("Foot", CaseSensitivity.INSENSITIVE);
+    int index = boyerMoore.indexIn("Barefoot is a movie directed by Andrew Flemming.");
     // index == 4
-    List<Integer> indixes = suffixArray.indexesOf("bla");
-    // indixes == [0, 9]
 
-Once you have a SuffixArray instance created you can search as often as you want for any search string.
+Once you have a `SuffixArray` instance created you can search as often as you want for any search string.
+
+The class `SuffixArray` also offers a method to find all indexes where the pattern occurs in the text.     
+
+    new BoyerMoore("re", CaseSensitivity.INSENSITIVE);
+    List<Integer> indexes = boyerMoore.indexesIn("Barefoot is a movie directed by Andrew Flemming.");
+    // indexes == [2, 22, 35]
+
+## Searching with search criterion
+
+The sections above describe how to search efficiently for occurrences of a pattern in a text. Sometimes
+you want to search using a _search criterion_ like `(foo AND bar) AND NOT (foobar)`.
+A search criterion can be a literal text or one or more search criteria combined using AND, OR and NOT operators.
+
+### Examples
+
+`foo` matches any line containing the literal text `foo`.
+
+`foo AND bar` matches any line containing both literals `foo` and `bar`. The order in which `foo` and `bar` are
+ present in the matching line is unimportant.
+
+The keyword AND is optional: `foo bar` is equivalent too `foo AND bar`.
+
+To match the exact literal `foo bar` put it between single or double quotes: both `'foo bar'` and `"foo bar"` match
+any line containing the exact literal `foo bar`.
+
+`foo OR bar` matches any line containing at leat one of the literals `foo` and `bar`. 
+
+`NOT foo` matches any line that does not contain `foo`.
+
+Use brackets to group parts of the criterion: `(foo OR bar) AND (blob OR blub)`.
+
+The keywords `AND`, `OR` and `NOT` are case insensitive.
+
+### The Criterion interface and Parser class
+
+The package `nl.gogognome.textsearch.criteria` contains the `Criterion` interface and classes implementing 
+this interface:
+
+* `StringLiteral`
+* `And`
+* `Or`
+* `Not`
+
+You can use these classes to build search criteria:
+
+    Criterion searchCriterion = new And(new StringLiteral("foo"), new StringLiteral("bar"));
+
+But the easiest way is to use the `Parser` class:
+
+    Criterion searchCriterion = new Parser().parse("foo AND bar"); 
 
 ### Check whether a string matches a criterion
 
@@ -88,55 +124,56 @@ Once you have created a `Criterion` instance you can use it to check whether a s
 
     Criterion searchCriterion = new Parser().parse("foo AND bar");
     CriterionMatcher matcher = new StringSearchFactory().caseInsensitiveCriterionMatcher();
-    boolean matches = matcher.matches(criterion, "Barefoot is a movie directed by Andrew Flemming.");
+    boolean matches = matcher.matches(searchCriterion, "Barefoot is a movie directed by Andrew Flemming.");
     // matches == true
 
 A special use case is that the `Criterion` must be matched against a number of attributes of an object.
 This could be implemented by joining these attributes' values to a single string, separated by a character
- that does not occur in the `Criterion`, and then matching
-the `Criterion` against this resulting string. This approach however would require a lot of string copying
-which is time consuming and produces a lot of gargabe on the heap. To overcome this problem
+that does not occur in the `Criterion`, and then matching
+the `Criterion` against this resulting string. This approach however would require a lot of string copying,
+which is time consuming and produces a lot of garbage on the heap. To overcome this problem
 the method `matches()` accepts a varargs string argument.
 The strings passed to the method are treated as if they were all joined together to a single string, separated
 by a character that does not occur in the {@link Criterion}.
 </p>
 
-<pre>
-  Criterion searchCriterion = new Parser().parse("foo AND bar");
-  CriterionMatcher matcher = new StringSearchFactory().caseInsensitiveCriterionMatcher();
-  boolean matches1 = matcher.matches(criterion, "Bart", "food");
-  // matches1 == true
-  boolean matches2 = matcher.matches(criterion, "ba", "rt food");
-  // matches2 == false because "bar" is not found
-</pre>
+    Criterion searchCriterion = new Parser().parse("foo AND bar");
+    CriterionMatcher matcher = new StringSearchFactory().caseInsensitiveCriterionMatcher();
+    boolean matches1 = matcher.matches(searchCriterion, "Bart", "food");
+    // matches1 == true
+    boolean matches2 = matcher.matches(searchCriterion, "ba", "rt food");
+    // matches2 == false because "bar" is not found
  
 ## Text file search
 
 The package `nl.gogognome.textsearch.textfile` contains the interface `TextFileSearch`. This interface specifies
-a method to get an iterator that returns lines of a text file that match a search criterion.
+a method to get an `Iterator` that returns lines of a text file that match a search criterion.
 
 Currently two implementations are available for this interface: `OneOffTextFileSearch` and `SuffixArrayTextFileSearch`.
 
 These two implementations are used by the classes `CachedSearchableTextFile` and `NonCachedSearchableTextFile`,
-which make it easier to search a file multiple times and get the matches in a list instead as an iterator.
+which make it easier to search a file multiple times and get the matches in a list instead as an `Iterator`.
 
 ### OneOffTextFileSearch
 
 This class is intended for searching a file just once. Its constructor expects an input stream to the file contents
-and a `StringSearch` instance for matching a line with a criterion. Finally, you ask for the iterator that returns
-all lines matching a specific criterion. The iterator returns each matching line of the text file. 
+and a `StringSearch` instance for matching a line with a criterion. Finally, you ask for the `Iterator` that returns
+all lines matching a specific criterion. The `Iterator` returns each matching line of the text file. 
 `OneOffTextFileSearch` does not close the input stream.
 
-    InputStream inputStream = ...;
-    Criterion searchCriterion = new Parser().parse("foo AND bar"); 
-    Iterator<String> iter = new OneOffTextFileSearch(inputStream, new StringSearch()).matchesIterator(searchCriterion);
-    while (iter.hasNext()) {
-        String nextLine = iter.next();
-    }
-    inputStream.close();
+        InputStream inputStream = ...
+        Criterion searchCriterion = new Parser().parse("foo AND bar");
+        Charset charset = StandardCharsets.UTF_8;
+        CriterionMatcher criterionMatcher = new StringSearchFactory().caseInsensitiveCriterionMatcher();
+        Iterator<String> iter = new OneOffTextFileSearch(inputStream, charset, criterionMatcher).matchesIterator(searchCriterion);
+        while (iter.hasNext()) {
+            String nextLine = iter.next();
+            // use nextLine 
+        }
+        inputStream.close();
      
 You are only allowed to ask for an iterator once, because the input stream is only read once. This library makes
-no assumptions on the capabilities of the input stream, whether its position can be reset or not. If you need to search
+no assumptions about the capabilities of the input stream, whether its position can be reset or not. If you need to search
 the file again with a different criterion, either create a new `OneOffTextFileSearch` 
 or use the `SuffixArrayTextFileSearch` which is optimized for multiple searches on the same file.
 
@@ -162,6 +199,7 @@ Typical usage:
 
     CachedSearchableTextFile searchableTextFile = new CachedSearchableTextFile(file, Charset.forName("UTF-8"));
     List<String> matches1 = searchableTextFile.getAllLinesMatching(new Parser().parse("foo AND bar"));
+
     // Get matches 100 up to 200 (i.e., skip 100 and next take 200-100 matches)
     List<String> matches2 = searchableTextFile.getLinesMatching(new Parser().parse("'something else'"), 100, 200);
     
@@ -172,3 +210,4 @@ Typical usage:
 | August 10, 2016   | 1.0.0   | Initial release. |
 | October 19, 2016  | 1.0.1   | Fixed precedence of NOT operator. Now it has highest precedence. |
 | October 27, 2016  | 1.0.2   | Added a StringSearch implementation that only matches if the search text equals the text to be searched. |
+| October 8, 2017   | 2.0.0   | Redesigned the API of the nl.gogognome.textsearch.string completely. Added Boyer-Moore algorithm. Made initialization of Suffix Array faster (O(n) instead of O(n*log(n)) |
