@@ -1,13 +1,14 @@
 package nl.gogognome.textsearch.criteria;
 
-import nl.gogognome.textsearch.criteria.LexicalScanner;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
-import static org.junit.Assert.*;
+import static java.util.stream.Collectors.toList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class LexicalScannerTest {
 
@@ -29,8 +30,9 @@ public class LexicalScannerTest {
     }
 
     private void assertScanReturnsTokens(String text, String... expectedTokens) {
-        Collection<String> tokens = new LexicalScanner(text).scan();
-        assertEquals(Arrays.asList(expectedTokens), new ArrayList<>(tokens));
+        Collection<Token> tokens = new LexicalScanner(text).scan();
+        List<String> actualTokenTexts = tokens.stream().map(token -> token.text).collect(toList());
+        assertEquals(Arrays.asList(expectedTokens), actualTokenTexts);
     }
     private void assertScanThrowsException(String text, String expectedExceptionMessage) {
         try {
