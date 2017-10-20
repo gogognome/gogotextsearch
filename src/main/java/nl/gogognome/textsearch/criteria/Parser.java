@@ -12,8 +12,8 @@ import java.util.Iterator;
  */
 public class Parser {
 
-    private String currentToken;
-    private Iterator<String> tokenIterator;
+    private Token currentToken;
+    private Iterator<Token> tokenIterator;
 
     /**
      * Parses a string representations of a Criterion.
@@ -38,7 +38,7 @@ public class Parser {
 
     private Criterion parseOrCriterion() {
         Criterion left = parseAndCriterion();
-        while (currentToken != null && currentToken.toLowerCase().equals("or")) {
+        while (currentToken != null && currentToken.isOperator("or")) {
             nextToken(); // skip "OR"
             Criterion right = parseAndCriterion();
             left = new Or(left, right);
@@ -48,9 +48,9 @@ public class Parser {
 
     private Criterion parseAndCriterion() {
         Criterion left = parseSimpleCriterion();
-        while (currentToken != null && (currentToken.toLowerCase().equals("and") ||
-                (!currentToken.toLowerCase().equals("or") && !currentToken.toLowerCase().equals("not") && !currentToken.equals("(") && !currentToken.equals(")")))) {
-            if (currentToken.toLowerCase().equals("and")) {
+        while (currentToken != null && (currentToken.isOperator("and") ||
+                (!currentToken.isOperator("or") && !currentToken.isOperator("not") && !currentToken.isOperator("(") && !currentToken.isOperator(")")))) {
+            if (currentToken.isOperator("and")) {
                 nextToken(); // skip "AND"
             }
             Criterion right = parseSimpleCriterion();
@@ -63,13 +63,13 @@ public class Parser {
         if (currentToken == null) {
             throw new IllegalArgumentException("Unexpected end of text");
         }
-        if (currentToken.toLowerCase().equals("not")) {
+        if (currentToken.isOperator("not")) {
             nextToken(); // skip "NOT"
             if (currentToken == null) {
                 throw new IllegalArgumentException("Expected criterion after \"NOT\"");
             }
             return new Not(parseSimpleCriterion());
-        } else if (currentToken.equals("(")) {
+        } else if (currentToken.isOperator("(")) {
             nextToken(); // skip "("
             if (currentToken == null) {
                 throw new IllegalArgumentException("Expected criterion after \"(\"");
@@ -81,7 +81,7 @@ public class Parser {
             nextToken(); // skip ")"
             return criterion;
         }
-        Criterion literal = new StringLiteral(currentToken);
+        Criterion literal = new StringLiteral(currentToken.text);
         nextToken();
         return literal;
     }
