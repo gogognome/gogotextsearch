@@ -44,7 +44,7 @@ public class SuffixArray {
         textLength = this.text.length();
         suffixArray = new int[textLength];
 
-        new sais().suffixSort(text, suffixArray, textLength, caseSensitivity);
+        new SuffixArrayInducedSorting().suffixSort(text, suffixArray, textLength, caseSensitivity);
     }
 
     /**
@@ -111,7 +111,7 @@ public class SuffixArray {
         int high = textLength;
 
         while (low + 1< high) {
-            int mid = (low + high) / 2;
+            int mid = (low + high) >>> 1;
 
             int index = suffixArray[mid];
             int signum = compare(index, searchString);

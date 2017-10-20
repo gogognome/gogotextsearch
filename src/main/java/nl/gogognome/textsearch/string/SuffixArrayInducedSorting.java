@@ -32,66 +32,35 @@ import nl.gogognome.textsearch.CaseSensitivity;
 
 import java.lang.String;
 
-public class sais {
-    private interface BaseArray {
-        int get(int i);
+/**
+ * For an explanation of SA-IS, see http://zork.net/~st/jottings/sais.html
+ */
+public class SuffixArrayInducedSorting {
 
-        void set(int i, int val);
-
-        int update(int i, int val);
-    }
-
-    private static class IntArray implements BaseArray {
-        private int[] m_A = null;
-        private int m_pos = 0;
+    private static final class IntArray {
+        private final int[] m_A;
+        private final int m_pos;
 
         IntArray(int[] A, int pos) {
             m_A = A;
             m_pos = pos;
         }
 
-        public int get(int i) {
+        final int get(int i) {
             return m_A[m_pos + i];
         }
 
-        public void set(int i, int val) {
+        final void set(int i, int val) {
             m_A[m_pos + i] = val;
         }
 
-        public int update(int i, int val) {
+        final int update(int i, int val) {
             return m_A[m_pos + i] += val;
         }
     }
 
-    private static class StringArray implements BaseArray {
-        private final String m_A;
-        private final int m_pos;
-        private final CaseSensitivity caseSensitivity;
-
-        StringArray(String A, int pos, CaseSensitivity caseSensitivity) {
-            m_A = A;
-            m_pos = pos;
-            this.caseSensitivity = caseSensitivity;
-        }
-
-        public int get(int i) {
-            char c = m_A.charAt(m_pos + i);
-            if (caseSensitivity == CaseSensitivity.INSENSITIVE) {
-                c = Character.toLowerCase(c);
-            }
-            return c & 0xffff;
-        }
-
-        public void set(int i, int val) {
-        }
-
-        public int update(int i, int val) {
-            return 0;
-        }
-    }
-
     /** find the start or end of each bucket */
-    private static void getCounts(BaseArray T, BaseArray C, int n, int k) {
+    private static void getCounts(IntArray T, IntArray C, int n, int k) {
         int i;
         for (i = 0; i < k; ++i) {
             C.set(i, 0);
@@ -101,7 +70,7 @@ public class sais {
         }
     }
 
-    private static void getBuckets(BaseArray C, BaseArray B, int k, boolean end) {
+    private static void getBuckets(IntArray C, IntArray B, int k, boolean end) {
         int i, sum = 0;
         if (end) {
             for (i = 0; i < k; ++i) {
@@ -117,7 +86,7 @@ public class sais {
     }
 
     /** sort all type LMS suffixes */
-    private static void LMSsort(BaseArray T, int[] SA, BaseArray C, BaseArray B, int n, int k) {
+    private static void LMSsort(IntArray T, int[] SA, IntArray C, IntArray B, int n, int k) {
         int b, i, j;
         int c0, c1;
         // compute SAl
@@ -160,7 +129,7 @@ public class sais {
         }
     }
 
-    private static int LMSpostproc(BaseArray T, int[] SA, int n, int m) {
+    private static int LMSpostproc(IntArray T, int[] SA, int n, int m) {
         int i, j, p, q, plen, qlen, name;
         int c0, c1;
         boolean diff;
@@ -226,7 +195,7 @@ public class sais {
     }
 
     // compute SA and BWT
-    private static void induceSA(BaseArray T, int[] SA, BaseArray C, BaseArray B, int n, int k) {
+    private static void induceSA(IntArray T, int[] SA, IntArray C, IntArray B, int n, int k) {
         int b, i, j;
         int c0, c1;
         // compute SAl
@@ -271,9 +240,9 @@ public class sais {
      * find the suffix array SA of T[0..n-1] in {0..k-1}^n
      * use a working space (excluding T and SA) of at most 2n+O(1) for a constant alphabet
      */
-    private static int SA_IS(BaseArray T, int[] SA, int fs, int n, int k) {
-        BaseArray C, B, RA;
-        int i, j, b, m, p, q, name, pidx = 0, newfs;
+    private static void buildSuffixArrayByInducedSorting(IntArray T, int[] SA, int fs, int n, int k) {
+        IntArray C, B, RA;
+        int i, j, b, m, p, q, name, newfs;
         int c0, c1;
         int flags;
 
@@ -368,7 +337,7 @@ public class sais {
                 }
             }
             RA = new IntArray(SA, m + newfs);
-            SA_IS(RA, SA, newfs, m, name);
+            buildSuffixArrayByInducedSorting(RA, SA, newfs, m, name);
 
             i = n - 1;
             j = m * 2 - 1;
@@ -428,21 +397,29 @@ public class sais {
             }
         }
         induceSA(T, SA, C, B, n, k);
-        return pidx;
     }
 
-    public static int suffixSort(String T, int[] SA, int n, CaseSensitivity caseSensitivity) {
+    public static void suffixSort(String T, int[] SA, int n, CaseSensitivity caseSensitivity) {
         if ((T == null) || (SA == null) ||
                 (T.length() < n) || (SA.length < n)) {
-            return -1;
+            return;
         }
         if (n <= 1) {
             if (n == 1) {
                 SA[0] = 0;
             }
-            return 0;
+            return;
         }
-        return SA_IS(new StringArray(T, 0, caseSensitivity), SA, 0, n, 65536);
+        if (caseSensitivity == CaseSensitivity.INSENSITIVE) {
+            T = T.toLowerCase();
+        }
+
+        int[] textAsIntArray = new int[T.length()];
+        for (int i=0; i<T.length(); i++) {
+            textAsIntArray[i] = T.charAt(i) & 0xffff;
+        }
+
+        buildSuffixArrayByInducedSorting(new IntArray(textAsIntArray, 0), SA, 0, n, 65536);
     }
 
 }
