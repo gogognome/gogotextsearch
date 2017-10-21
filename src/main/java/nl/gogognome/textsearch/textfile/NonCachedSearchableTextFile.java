@@ -1,8 +1,11 @@
 package nl.gogognome.textsearch.textfile;
 
-import nl.gogognome.textsearch.string.StringSearchFactory;
+import nl.gogognome.textsearch.string.CriterionMatcher;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 
 /**
@@ -20,18 +23,19 @@ public class NonCachedSearchableTextFile extends BaseSearchableTextFile {
 
     private final File file;
     private final Charset charset;
-    private final StringSearchFactory stringSearchFactory = new StringSearchFactory();
+    private final CriterionMatcher.Builder criterionMatcherBuilder;
     private InputStream inputStream;
 
-    public NonCachedSearchableTextFile(File file, Charset charset) {
+    public NonCachedSearchableTextFile(File file, Charset charset, CriterionMatcher.Builder criterionMatcherBuilder) {
         this.file = file;
         this.charset = charset;
+        this.criterionMatcherBuilder = criterionMatcherBuilder;
     }
 
     @Override
-    protected void ensureTextFileSearchIsInitizialized() throws IOException {
+    protected void ensureTextFileSearchIsInitialized() throws IOException {
         inputStream = new FileInputStream(file);
-        textFileSearch = new OneOffTextFileSearch(inputStream, charset, stringSearchFactory.caseInsensitiveCriterionMatcher());
+        textFileSearch = new OneOffTextFileSearch(inputStream, charset, criterionMatcherBuilder);
     }
 
     @Override

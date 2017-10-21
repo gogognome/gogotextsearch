@@ -82,9 +82,9 @@ public class ReadMe {
 
     @Test
     public void criterionMatcherSample() {
-        Criterion searchCriterion = new Parser().parse("foo AND bar");
-        CriterionMatcher matcher = new StringSearchFactory().caseInsensitiveCriterionMatcher();
-        boolean matches = matcher.matches(searchCriterion, "Barefoot is a movie directed by Andrew Flemming.");
+        Criterion criterion = new Parser().parse("foo AND bar");
+        CriterionMatcher matcher = new StringSearchFactory().caseInsensitiveCriterionMatcher(criterion);
+        boolean matches = matcher.matches("Barefoot is a movie directed by Andrew Flemming.");
         // matches == true
 
         assertTrue(matches);
@@ -92,11 +92,11 @@ public class ReadMe {
 
     @Test
     public void criterionMatcherVarargsSample() {
-        Criterion searchCriterion = new Parser().parse("foo AND bar");
-        CriterionMatcher matcher = new StringSearchFactory().caseInsensitiveCriterionMatcher();
-        boolean matches1 = matcher.matches(searchCriterion, "Bart", "food");
+        Criterion criterion = new Parser().parse("foo AND bar");
+        CriterionMatcher matcher = new StringSearchFactory().caseInsensitiveCriterionMatcher(criterion);
+        boolean matches1 = matcher.matches("Bart", "food");
         // matches1 == true
-        boolean matches2 = matcher.matches(searchCriterion, "ba", "rt food");
+        boolean matches2 = matcher.matches("ba", "rt food");
         // matches2 == false because "bar" is not found
 
         assertTrue(matches1);
@@ -111,8 +111,8 @@ public class ReadMe {
         // InputStream inputStream = ...
         Criterion searchCriterion = new Parser().parse("foo AND bar");
         Charset charset = StandardCharsets.UTF_8;
-        CriterionMatcher criterionMatcher = new StringSearchFactory().caseInsensitiveCriterionMatcher();
-        Iterator<String> iter = new OneOffTextFileSearch(inputStream, charset, criterionMatcher).matchesIterator(searchCriterion);
+        CriterionMatcher.Builder criterionMatcherBuilder = new StringSearchFactory().caseInsensitiveCriterionMatcherBuilder();
+        Iterator<String> iter = new OneOffTextFileSearch(inputStream, charset, criterionMatcherBuilder).matchesIterator(searchCriterion);
         while (iter.hasNext()) {
             String nextLine = iter.next();
             // use nextLine

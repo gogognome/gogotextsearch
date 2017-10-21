@@ -116,15 +116,15 @@ You can use these classes to build search criteria:
 
 But the easiest way is to use the `Parser` class:
 
-    Criterion searchCriterion = new Parser().parse("foo AND bar"); 
+    Criterion criterion = new Parser().parse("foo AND bar"); 
 
 ### Check whether a string matches a criterion
 
 Once you have created a `Criterion` instance you can use it to check whether a string matches this criterion:
 
-    Criterion searchCriterion = new Parser().parse("foo AND bar");
-    CriterionMatcher matcher = new StringSearchFactory().caseInsensitiveCriterionMatcher();
-    boolean matches = matcher.matches(searchCriterion, "Barefoot is a movie directed by Andrew Flemming.");
+    Criterion criterion = new Parser().parse("foo AND bar");
+    CriterionMatcher matcher = new StringSearchFactory().caseInsensitiveCriterionMatcher(criterion);
+    boolean matches = matcher.matches("Barefoot is a movie directed by Andrew Flemming.");
     // matches == true
 
 A special use case is that the `Criterion` must be matched against a number of attributes of an object.
@@ -137,11 +137,11 @@ The strings passed to the method are treated as if they were all joined together
 by a character that does not occur in the {@link Criterion}.
 </p>
 
-    Criterion searchCriterion = new Parser().parse("foo AND bar");
-    CriterionMatcher matcher = new StringSearchFactory().caseInsensitiveCriterionMatcher();
-    boolean matches1 = matcher.matches(searchCriterion, "Bart", "food");
+    Criterion criterion = new Parser().parse("foo AND bar");
+    CriterionMatcher matcher = new StringSearchFactory().caseInsensitiveCriterionMatcher(criterion);
+    boolean matches1 = matcher.matches("Bart", "food");
     // matches1 == true
-    boolean matches2 = matcher.matches(searchCriterion, "ba", "rt food");
+    boolean matches2 = matcher.matches("ba", "rt food");
     // matches2 == false because "bar" is not found
  
 ## Text file search
@@ -161,16 +161,16 @@ and a `StringSearch` instance for matching a line with a criterion. Finally, you
 all lines matching a specific criterion. The `Iterator` returns each matching line of the text file. 
 `OneOffTextFileSearch` does not close the input stream.
 
-        InputStream inputStream = ...
-        Criterion searchCriterion = new Parser().parse("foo AND bar");
-        Charset charset = StandardCharsets.UTF_8;
-        CriterionMatcher criterionMatcher = new StringSearchFactory().caseInsensitiveCriterionMatcher();
-        Iterator<String> iter = new OneOffTextFileSearch(inputStream, charset, criterionMatcher).matchesIterator(searchCriterion);
-        while (iter.hasNext()) {
-            String nextLine = iter.next();
-            // use nextLine 
-        }
-        inputStream.close();
+    // InputStream inputStream = ...
+    Criterion searchCriterion = new Parser().parse("foo AND bar");
+    Charset charset = StandardCharsets.UTF_8;
+    CriterionMatcher.Builder criterionMatcherBuilder = new StringSearchFactory().caseInsensitiveCriterionMatcherBuilder();
+    Iterator<String> iter = new OneOffTextFileSearch(inputStream, charset, criterionMatcherBuilder).matchesIterator(searchCriterion);
+    while (iter.hasNext()) {
+        String nextLine = iter.next();
+        // use nextLine
+    }
+    inputStream.close();
      
 You are only allowed to ask for an iterator once, because the input stream is only read once. This library makes
 no assumptions about the capabilities of the input stream, whether its position can be reset or not. If you need to search

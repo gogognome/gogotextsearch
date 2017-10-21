@@ -19,10 +19,14 @@ import java.util.Iterator;
  * <p>Example usage:</p>
  * <pre>
  *   InputStream inputStream = ...;
- *   Criterion searchCriterion = new Parser().parse("foo AND bar");
- *   Iterator<String> iter = new OneOffTextFileSearch(inputStream, new StringSearch()).matchesIterator(searchCriterion);
+ *   Criterion criterion = new Parser().parse("foo AND bar");
+ *   Charset charset = StandardCharsets.UTF_8;
+ *   CriterionMatcher criterionMatcher = new StringSearchFactory().caseInsensitiveCriterionMatcher(criterion);
+ *   Iterator<String> iter = new OneOffTextFileSearch(inputStream, charset, criterionMatcher).matchesIterator(searchCriterion);
  *   while (iter.hasNext()) {
- *   String nextLine = iter.next();
+ *       String nextLine = iter.next();
+ *       // use nextLine
+ *       actualMatches.add(nextLine); // remove from README.md
  *   }
  *   inputStream.close();
  * </pre>
@@ -34,11 +38,11 @@ import java.util.Iterator;
  */
 public class OneOffTextFileSearch implements TextFileSearch {
 
-    private final CriterionMatcher criterionMatcher;
+    private final CriterionMatcher.Builder criterionMatcherBuilder;
     private BufferedReader bufferedReader;
 
-    public OneOffTextFileSearch(InputStream inputStream, Charset charset, CriterionMatcher criterionMatcher) {
-        this.criterionMatcher = criterionMatcher;
+    public OneOffTextFileSearch(InputStream inputStream, Charset charset, CriterionMatcher.Builder criterionMatcherBuilder) {
+        this.criterionMatcherBuilder = criterionMatcherBuilder;
         bufferedReader = new BufferedReader(new InputStreamReader(inputStream, charset));
     }
 
@@ -47,7 +51,8 @@ public class OneOffTextFileSearch implements TextFileSearch {
         if (bufferedReader == null) {
             throw new IllegalStateException("The iterator can be used only once! Create a new instance of this class if you need to iterate again.");
         }
-        MatchIterator iterator = new MatchIterator(bufferedReader, criterion, criterionMatcher);
+        CriterionMatcher criterionMatcher = criterionMatcherBuilder.build(criterion);
+        MatchIterator iterator = new MatchIterator(bufferedReader, criterionMatcher);
         bufferedReader = null;
         return iterator;
     }
@@ -56,12 +61,10 @@ public class OneOffTextFileSearch implements TextFileSearch {
 
         private final CriterionMatcher criterionMatcher;
         private final BufferedReader bufferedReader;
-        private final Criterion criterion;
         private String nextValue;
 
-        private MatchIterator(BufferedReader bufferedReader, Criterion criterion, CriterionMatcher criterionMatcher) {
+        private MatchIterator(BufferedReader bufferedReader, CriterionMatcher criterionMatcher) {
             this.bufferedReader = bufferedReader;
-            this.criterion = criterion;
             this.criterionMatcher = criterionMatcher;
 
             determineNextValue();
@@ -83,12 +86,12 @@ public class OneOffTextFileSearch implements TextFileSearch {
             try {
                 nextValue = null;
                 for (String line = bufferedReader.readLine(); line != null && nextValue == null; line = bufferedReader.readLine()) {
-                    if (criterionMatcher.matches(criterion, line)) {
+                    if (criterionMatcher.matches(line)) {
                         nextValue = line;
                     }
                 }
             } catch (IOException e) {
-                throw new RuntimeException("A problem ocurred while reading the next line from the file", e);
+                throw new RuntimeException("A problem occurred while reading the next line from the file", e);
             }
         }
     }

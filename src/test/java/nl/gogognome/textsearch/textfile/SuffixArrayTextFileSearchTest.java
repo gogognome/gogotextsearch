@@ -1,6 +1,7 @@
 package nl.gogognome.textsearch.textfile;
 
 import nl.gogognome.textsearch.criteria.Criterion;
+import nl.gogognome.textsearch.criteria.CriterionVisitor;
 import nl.gogognome.textsearch.criteria.Parser;
 import org.junit.Test;
 
@@ -83,7 +84,12 @@ public class SuffixArrayTextFileSearchTest {
     @Test
     public void searchForNonExistentOperatorShouldThrowAnException() {
         try {
-            new SuffixArrayTextFileSearch("ABCD").matchesIterator(new Criterion() {});
+            new SuffixArrayTextFileSearch("ABCD").matchesIterator(new Criterion() {
+                @Override
+                public <CV extends CriterionVisitor> CV accept(CV visitor) {
+                    return visitor;
+                }
+            });
             fail("Expected exception was not thrown");
         } catch (Exception e) {
             assertEquals(IllegalArgumentException.class, e.getClass());

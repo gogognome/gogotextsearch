@@ -8,12 +8,12 @@ import static org.junit.Assert.*;
 
 public class CriterionMatcherTest {
 
-    private final CriterionMatcher caseSensitiveCriterionMatcher = new StringSearchFactory().caseSensitiveCriterionMatcher();
-    private final CriterionMatcher caseInsensitiveCriterionMatcher = new StringSearchFactory().caseInsensitiveCriterionMatcher();
+    private final StringSearchFactory stringSearchFactory = new StringSearchFactory();
 
     @Test(expected = IllegalArgumentException.class)
     public void whenUnknownCriterionImplementationIsPassedThenMatchesShouldThrowException() {
-        caseSensitiveCriterionMatcher.matches(Mockito.mock(Criterion.class), "bladiebla");
+        CriterionMatcher criterionMatcher = stringSearchFactory.caseSensitiveCriterionMatcher(Mockito.mock(Criterion.class));
+        criterionMatcher.matches("bladiebla");
     }
 
     @Test
@@ -32,11 +32,13 @@ public class CriterionMatcherTest {
     }
 
     private void assertMatchesCaseSensitive(String text, Criterion criterion) {
-        assertTrue(caseSensitiveCriterionMatcher.matches(criterion, text));
+        CriterionMatcher criterionMatcher = stringSearchFactory.caseSensitiveCriterionMatcher(criterion);
+        assertTrue(criterionMatcher.matches(text));
     }
 
     private void assertNotMatchesCaseSensitive(String text, Criterion criterion) {
-        assertFalse(caseSensitiveCriterionMatcher.matches(criterion, text));
+        CriterionMatcher criterionMatcher = stringSearchFactory.caseSensitiveCriterionMatcher(criterion);
+        assertFalse(criterionMatcher.matches(text));
     }
 
     @Test
@@ -71,10 +73,12 @@ public class CriterionMatcherTest {
     }
 
     private void assertMatchesCaseInsensitive(Criterion criterion, String... text) {
-        assertTrue(caseInsensitiveCriterionMatcher.matches(criterion, text));
+        CriterionMatcher criterionMatcher = stringSearchFactory.caseInsensitiveCriterionMatcher(criterion);
+        assertTrue(criterionMatcher.matches(text));
     }
 
     private void assertNotMatchesCaseInsensitive(Criterion criterion, String... text) {
-        assertFalse(caseInsensitiveCriterionMatcher.matches(criterion, text));
+        CriterionMatcher criterionMatcher = stringSearchFactory.caseInsensitiveCriterionMatcher(criterion);
+        assertFalse(criterionMatcher.matches(text));
     }
 }

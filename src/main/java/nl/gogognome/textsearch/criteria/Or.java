@@ -19,6 +19,12 @@ public class Or implements Criterion {
     }
 
     @Override
+    public <CV extends CriterionVisitor> CV accept(CV visitor) {
+        visitor.visit(this);
+        return visitor;
+    }
+
+    @Override
     public String toString() {
         return '(' + left.toString() + " OR " + right.toString() + ')';
     }

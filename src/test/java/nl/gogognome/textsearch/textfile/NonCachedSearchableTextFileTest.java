@@ -1,7 +1,7 @@
 package nl.gogognome.textsearch.textfile;
 
 import nl.gogognome.textsearch.criteria.StringLiteral;
-import nl.gogognome.textsearch.string.SuffixArray;
+import nl.gogognome.textsearch.string.StringSearchFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +19,7 @@ public class NonCachedSearchableTextFileTest {
 
     private final static String DATA = "bla bloep bla";
     private final static Charset CHARSET = Charset.forName("UTF-8");
+    private final StringSearchFactory stringSearchFactory = new StringSearchFactory();
     private File file;
 
     @Before
@@ -39,15 +40,15 @@ public class NonCachedSearchableTextFileTest {
 
     @Test
     public void whenInitMethodIsNotCalledThenTextFileSearchMustBeNull() {
-        NonCachedSearchableTextFile searchableTextFile = new NonCachedSearchableTextFile(file, CHARSET);
+        NonCachedSearchableTextFile searchableTextFile = new NonCachedSearchableTextFile(file, CHARSET, stringSearchFactory.caseInsensitiveCriterionMatcherBuilder());
 
         assertNull(searchableTextFile.textFileSearch);
     }
 
     @Test
     public void whenFinishMethodIsCalledThenTextFileSearchMustBeSetToNull() throws IOException {
-        NonCachedSearchableTextFile searchableTextFile = new NonCachedSearchableTextFile(file, CHARSET);
-        searchableTextFile.ensureTextFileSearchIsInitizialized();
+        NonCachedSearchableTextFile searchableTextFile = new NonCachedSearchableTextFile(file, CHARSET, stringSearchFactory.caseInsensitiveCriterionMatcherBuilder());
+        searchableTextFile.ensureTextFileSearchIsInitialized();
 
         searchableTextFile.onSearchFinished();
 
@@ -56,13 +57,13 @@ public class NonCachedSearchableTextFileTest {
 
     @Test
     public void whenFinishMethodIsCalledTwiceThenTextFileSearchMustBeSetTwice() throws IOException {
-        NonCachedSearchableTextFile searchableTextFile = new NonCachedSearchableTextFile(file, CHARSET);
-        searchableTextFile.ensureTextFileSearchIsInitizialized();
+        NonCachedSearchableTextFile searchableTextFile = new NonCachedSearchableTextFile(file, CHARSET, stringSearchFactory.caseInsensitiveCriterionMatcherBuilder());
+        searchableTextFile.ensureTextFileSearchIsInitialized();
         TextFileSearch firstTextFileSearch = searchableTextFile.textFileSearch;
         searchableTextFile.onSearchFinished();
 
         try {
-            searchableTextFile.ensureTextFileSearchIsInitizialized();
+            searchableTextFile.ensureTextFileSearchIsInitialized();
 
             assertNotNull(searchableTextFile.textFileSearch);
             assertNotSame(firstTextFileSearch, searchableTextFile.textFileSearch);
@@ -73,9 +74,9 @@ public class NonCachedSearchableTextFileTest {
 
     @Test
     public void initMethodShouldInitializeTextFileSearchCorrectly() throws IOException {
-        NonCachedSearchableTextFile searchableTextFile = new NonCachedSearchableTextFile(file, CHARSET);
+        NonCachedSearchableTextFile searchableTextFile = new NonCachedSearchableTextFile(file, CHARSET, stringSearchFactory.caseInsensitiveCriterionMatcherBuilder());
         try {
-            searchableTextFile.ensureTextFileSearchIsInitizialized();
+            searchableTextFile.ensureTextFileSearchIsInitialized();
 
             assertNotNull(searchableTextFile.textFileSearch);
 

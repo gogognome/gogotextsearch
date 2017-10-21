@@ -1,5 +1,9 @@
 package nl.gogognome.textsearch.string;
 
+import nl.gogognome.textsearch.criteria.Criterion;
+
+import java.util.function.Predicate;
+
 import static nl.gogognome.textsearch.CaseSensitivity.INSENSITIVE;
 import static nl.gogognome.textsearch.CaseSensitivity.SENSITIVE;
 
@@ -23,36 +27,69 @@ public class StringSearchFactory {
     }
 
     /**
+     * @param criterion the criterion that is matched by the returned @{@link CriterionMatcher}
      * @return creates a @{@link CriterionMatcher} that is case sensitive
      */
-    public CriterionMatcher caseSensitiveCriterionMatcher() {
-        StringSearch stringSearch = caseSensitiveStringSearch();
-        return new CriterionMatcher((text, literal) -> stringSearch.indexOf(text, literal) != -1);
+    public CriterionMatcher caseSensitiveCriterionMatcher(Criterion criterion) {
+        return caseSensitiveCriterionMatcherBuilder().build(criterion);
+    }
+
+    public CriterionMatcher.Builder caseSensitiveCriterionMatcherBuilder() {
+        return new CriterionMatcher.Builder(pattern -> new BoyerMoorePredicate(new BoyerMoore(pattern, SENSITIVE)));
+    }
+
+    /**
+     * @param criterion the criterion that is matched by the returned @{@link CriterionMatcher}
+     * @return creates a @{@link CriterionMatcher} that is case insensitive
+     */
+    public CriterionMatcher caseInsensitiveCriterionMatcher(Criterion criterion) {
+        return caseInsensitiveCriterionMatcherBuilder().build(criterion);
     }
 
     /**
      * @return creates a @{@link CriterionMatcher} that is case insensitive
      */
-    public CriterionMatcher caseInsensitiveCriterionMatcher() {
-        StringSearch stringSearch = caseInsensitiveStringSearch();
-        return new CriterionMatcher((text, literal) -> stringSearch.indexOf(text, literal) != -1);
+    public CriterionMatcher.Builder caseInsensitiveCriterionMatcherBuilder() {
+        return new CriterionMatcher.Builder(pattern -> new BoyerMoorePredicate(new BoyerMoore(pattern, INSENSITIVE)));
     }
 
+    private static class BoyerMoorePredicate implements Predicate<String> {
+        private BoyerMoore boyerMoore;
+
+        private BoyerMoorePredicate(BoyerMoore boyerMoore) {
+            this.boyerMoore = boyerMoore;
+        }
+
+        @Override
+        public boolean test(String text) {
+            return boyerMoore.indexIn(text) != -1;
+        }
+    }
 
     /**
+     * @param criterion the criterion that is matched by the returned @{@link CriterionMatcher}
      * @return creates a @{@link CriterionMatcher} that is case sensitive
      */
-    public CriterionMatcher caseSensitiveStringEqualsCriterionMatcher() {
+    public CriterionMatcher caseSensitiveStringEqualsCriterionMatcher(Criterion criterion) {
+        return caseSensitiveStringEqualsCriterionMatcherBuilder().build(criterion);
+    }
+
+    public CriterionMatcher.Builder caseSensitiveStringEqualsCriterionMatcherBuilder() {
         StringSearch stringSearch = caseSensitiveStringSearch();
-        return new CriterionMatcher((text, literal) -> stringSearch.equals(text, literal));
+        return new CriterionMatcher.Builder(pattern -> text -> stringSearch.equals(text, pattern));
     }
 
     /**
+     * @param criterion the criterion that is matched by the returned @{@link CriterionMatcher}
      * @return creates a @{@link CriterionMatcher} that is case insensitive
      */
-    public CriterionMatcher caseInsensitiveStringEqualsCriterionMatcher() {
+    public CriterionMatcher caseInsensitiveStringEqualsCriterionMatcher(Criterion criterion) {
+        return caseInsensitiveStringEqualsCriterionMatcherBuilder().build(criterion);
+    }
+
+    public CriterionMatcher.Builder caseInsensitiveStringEqualsCriterionMatcherBuilder() {
         StringSearch stringSearch = caseInsensitiveStringSearch();
-        return new CriterionMatcher((text, literal) -> stringSearch.equals(text, literal));
+        return new CriterionMatcher.Builder(pattern -> text -> stringSearch.equals(text, pattern));
     }
 
 }

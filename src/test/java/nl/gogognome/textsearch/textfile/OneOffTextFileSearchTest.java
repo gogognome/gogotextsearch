@@ -2,6 +2,7 @@ package nl.gogognome.textsearch.textfile;
 
 import nl.gogognome.textsearch.criteria.Criterion;
 import nl.gogognome.textsearch.string.CriterionMatcher;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -16,7 +17,13 @@ import static org.mockito.Mockito.*;
 public class OneOffTextFileSearchTest {
 
     private CriterionMatcher criterionMatcher = mock(CriterionMatcher.class);
+    private CriterionMatcher.Builder criterionMatcherBuilder = mock(CriterionMatcher.Builder.class);
     private Criterion someCriterion = mock(Criterion.class);
+
+    @Before
+    public void setUpMock() {
+        when(criterionMatcherBuilder.build(any(Criterion.class))).thenReturn(criterionMatcher);
+    }
 
     @Test
     public void whenIteratorIsRetrievedForSecondTimeThenExceptionShouldBeThrown() {
@@ -33,17 +40,17 @@ public class OneOffTextFileSearchTest {
 
     @Test
     public void emptyInputStreamShouldHaveNoMatches() {
-        when(criterionMatcher.matches(any(Criterion.class), anyString())).thenReturn(true);
+        when(criterionMatcher.matches(anyString())).thenReturn(true);
 
         OneOffTextFileSearch oneOffTextFileSearch = buildOneOffTextFileSearch("");
 
         assertFalse(oneOffTextFileSearch.matchesIterator(someCriterion).hasNext());
-        verify(criterionMatcher, never()).matches(any(Criterion.class), anyString());
+        verify(criterionMatcher, never()).matches(anyString());
     }
 
     @Test
     public void inputStreamWithTwoLinesAndOneOfWhichMatchesShouldReturnOneLine() {
-        when(criterionMatcher.matches(any(Criterion.class), anyString())).thenReturn(false, true);
+        when(criterionMatcher.matches(anyString())).thenReturn(false, true);
 
         OneOffTextFileSearch oneOffTextFileSearch = buildOneOffTextFileSearch("one\ntwo");
 
@@ -51,7 +58,7 @@ public class OneOffTextFileSearchTest {
         assertTrue(iterator.hasNext());
         assertEquals("two", iterator.next());
         assertFalse(iterator.hasNext());
-        verify(criterionMatcher, times(2)).matches(any(Criterion.class), anyString());
+        verify(criterionMatcher, times(2)).matches(anyString());
     }
 
     @Test
@@ -61,19 +68,19 @@ public class OneOffTextFileSearchTest {
         when(inputStream.read(anyObject())).thenThrow(new IOException("Test exception"));
         when(inputStream.read(anyObject(), anyInt(), anyInt())).thenThrow(new IOException("Test exception"));
 
-        OneOffTextFileSearch oneOffTextFileSearch = new OneOffTextFileSearch(inputStream, Charset.forName("UTF-8"), criterionMatcher);
+        OneOffTextFileSearch oneOffTextFileSearch = new OneOffTextFileSearch(inputStream, Charset.forName("UTF-8"), criterionMatcherBuilder);
 
         try {
             oneOffTextFileSearch.matchesIterator(someCriterion);
             fail("Expected exception was not thrown");
         } catch (RuntimeException e) {
-            assertEquals("A problem ocurred while reading the next line from the file", e.getMessage());
+            assertEquals("A problem occurred while reading the next line from the file", e.getMessage());
             assertEquals(IOException.class, e.getCause().getClass());
         }
     }
 
     private OneOffTextFileSearch buildOneOffTextFileSearch(String text) {
         Charset charset = Charset.forName("UTF-8");
-        return new OneOffTextFileSearch(new ByteArrayInputStream(text.getBytes(charset)), charset, criterionMatcher);
+        return new OneOffTextFileSearch(new ByteArrayInputStream(text.getBytes(charset)), charset, criterionMatcherBuilder);
     }
 }
