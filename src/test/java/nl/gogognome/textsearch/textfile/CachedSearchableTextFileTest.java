@@ -1,5 +1,6 @@
 package nl.gogognome.textsearch.textfile;
 
+import nl.gogognome.textsearch.criteria.StringLiteral;
 import nl.gogognome.textsearch.string.SuffixArray;
 import org.junit.After;
 import org.junit.Before;
@@ -10,7 +11,10 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
+import java.util.List;
 
+import static java.util.Arrays.asList;
 import static nl.gogognome.textsearch.CaseSensitivity.INSENSITIVE;
 import static org.junit.Assert.*;
 
@@ -46,7 +50,7 @@ public class CachedSearchableTextFileTest {
     @Test
     public void whenFinishMethodIsCalledThenTextFileSearchMustNotBeSetToNull() throws IOException {
         CachedSearchableTextFile searchableTextFile = new CachedSearchableTextFile(file, CHARSET);
-        searchableTextFile.ensureTextFileSearchIsInitizialized();
+        searchableTextFile.ensureTextFileSearchIsInitialized();
 
         searchableTextFile.onSearchFinished();
 
@@ -56,10 +60,10 @@ public class CachedSearchableTextFileTest {
     @Test
     public void whenFinishMethodIsCalledTwiceThenTextFileSearchMustOnlyBeSetOnce() throws IOException {
         CachedSearchableTextFile searchableTextFile = new CachedSearchableTextFile(file, CHARSET);
-        searchableTextFile.ensureTextFileSearchIsInitizialized();
+        searchableTextFile.ensureTextFileSearchIsInitialized();
         TextFileSearch expectedTextFileSearch = searchableTextFile.textFileSearch;
 
-        searchableTextFile.ensureTextFileSearchIsInitizialized();
+        searchableTextFile.ensureTextFileSearchIsInitialized();
 
         assertSame(expectedTextFileSearch, searchableTextFile.textFileSearch);
     }
@@ -68,11 +72,33 @@ public class CachedSearchableTextFileTest {
     public void initMethodShouldInitializeTextFileSearchCorrectly() throws IOException {
         CachedSearchableTextFile searchableTextFile = new CachedSearchableTextFile(file, CHARSET);
 
-        searchableTextFile.ensureTextFileSearchIsInitizialized();
+        searchableTextFile.ensureTextFileSearchIsInitialized();
 
         assertNotNull(searchableTextFile.textFileSearch);
         // A trick: use the toString() of the TextFileSearch to assert it was initialized correctly
         assertEquals("SuffixArrayTextFileSearch with data: " + new SuffixArray(TEXT, INSENSITIVE),
                 searchableTextFile.textFileSearch.toString());
     }
+
+    @Test
+    public void firstLineStartsAfterByteOrderMark() throws IOException {
+        byte[][] boms = new byte[][] {
+                { (byte) 0xef, (byte) 0xbb, (byte) 0xbf },
+                { (byte) 0xfe, (byte) 0xff },
+                { (byte) 0xff, (byte) 0xfe }
+        };
+
+        for (byte[] bom : boms) {
+            byte[] bytes = new byte[bom.length + TEXT.length()];
+            System.arraycopy(bom, 0, bytes, 0, bom.length);
+            System.arraycopy(TEXT.getBytes(CHARSET), 0, bytes, bom.length, TEXT.length());
+            Files.write(file.toPath(), bytes);
+
+            CachedSearchableTextFile searchableTextFile = new CachedSearchableTextFile(file, CHARSET);
+
+            List<String> matchingLines = searchableTextFile.getLinesMatching(new StringLiteral("bla"), 0, 100);
+            assertEquals("Byte order marker: " + Arrays.toString(bom), asList(TEXT), matchingLines);
+        }
+    }
+
 }
