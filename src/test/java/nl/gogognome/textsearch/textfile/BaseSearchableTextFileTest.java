@@ -64,7 +64,7 @@ public class BaseSearchableTextFileTest {
         private int nrFinishCalls;
 
         @Override
-        protected void ensureTextFileSearchIsInitizialized() throws IOException {
+        protected void ensureTextFileSearchIsInitialized() throws IOException {
             nrInitCalls++;
             textFileSearch = textFileSearchMock;
         }

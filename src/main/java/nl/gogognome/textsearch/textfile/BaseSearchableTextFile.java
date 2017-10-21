@@ -35,7 +35,7 @@ abstract class BaseSearchableTextFile {
      */
     public List<String> getLinesMatching(Criterion criterion, int start, int end) throws IOException {
         try {
-            ensureTextFileSearchIsInitizialized();
+            ensureTextFileSearchIsInitialized();
             List<String> result = new ArrayList<>(Math.min(end - start, 1000));
             Iterator<String> iter = textFileSearch.matchesIterator(criterion);
             int index = 0;
@@ -57,11 +57,11 @@ abstract class BaseSearchableTextFile {
      * This method should ensure that the text file is initialized for searching.
      * @throws IOException if a problem occurs while reading the text file
      */
-    protected abstract void ensureTextFileSearchIsInitizialized() throws IOException;
+    protected abstract void ensureTextFileSearchIsInitialized() throws IOException;
 
     /**
      * This method is called once at the end of the methods that get matching lines.
-     * This method should ensure that resources claimed by {@link #ensureTextFileSearchIsInitizialized()} are released.
+     * This method should ensure that resources claimed by {@link #ensureTextFileSearchIsInitialized()} are released.
      * @throws IOException if a problem occurs while reading the text file
      */
     protected abstract void onSearchFinished() throws IOException;
