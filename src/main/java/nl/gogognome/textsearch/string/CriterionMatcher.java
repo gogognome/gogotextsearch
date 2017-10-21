@@ -44,11 +44,7 @@ public class CriterionMatcher {
     private final MatchingCriterion matchingCriterion;
 
     private CriterionMatcher(Criterion criterion, Function<String, Predicate<String>> buildStringMatcher) {
-        try {
-            matchingCriterion = criterion.accept(new MatchingCriterionBuilder(buildStringMatcher)).getMatchingCriterion();
-        } catch (NullPointerException e) {
-            throw new IllegalArgumentException("Criterion returned null instead of CriterionVisitor", e);
-        }
+        matchingCriterion = new MatchingCriterionBuilder(buildStringMatcher).getMatchingCriterionFor(criterion);
         if (matchingCriterion == null) {
             throw new IllegalArgumentException("The criterion could not be converted to a CriterionMatcher");
         }
@@ -71,33 +67,38 @@ public class CriterionMatcher {
             this.buildStringMatcher = buildStringMatcher;
         }
 
-        public MatchingCriterion getMatchingCriterion() {
+        private MatchingCriterion getMatchingCriterion() {
             return matchingCriterion;
         }
 
         @Override
         public void visit(And and) {
-            matchingCriterion = new MatchingAnd(
-                    and.getLeft().accept(new MatchingCriterionBuilder(buildStringMatcher)).getMatchingCriterion(),
-                    and.getRight().accept(new MatchingCriterionBuilder(buildStringMatcher)).getMatchingCriterion());
+            this.matchingCriterion = new MatchingAnd(
+                    getMatchingCriterionFor(and.getLeft()),
+                    getMatchingCriterionFor(and.getRight()));
         }
 
         @Override
         public void visit(Or or) {
             matchingCriterion = new MatchingOr(
-                    or.getLeft().accept(new MatchingCriterionBuilder(buildStringMatcher)).getMatchingCriterion(),
-                    or.getRight().accept(new MatchingCriterionBuilder(buildStringMatcher)).getMatchingCriterion());
+                    getMatchingCriterionFor(or.getLeft()),
+                    getMatchingCriterionFor(or.getRight()));
         }
 
         @Override
         public void visit(Not not) {
             matchingCriterion = new MatchingNot(
-                    not.getCriterion().accept(new MatchingCriterionBuilder(buildStringMatcher)).getMatchingCriterion());
+                    getMatchingCriterionFor(not.getCriterion()));
         }
 
         @Override
         public void visit(StringLiteral stringLiteral) {
             matchingCriterion = new MatchingStringLiteral(buildStringMatcher.apply(stringLiteral.getLiteral()));
+        }
+
+        private MatchingCriterion getMatchingCriterionFor(Criterion criterion) {
+            criterion.accept(this);
+            return getMatchingCriterion();
         }
     }
 

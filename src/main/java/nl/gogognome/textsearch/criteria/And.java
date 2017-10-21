@@ -19,9 +19,8 @@ public class And implements Criterion {
     }
 
     @Override
-    public <CV extends CriterionVisitor> CV accept(CV visitor) {
+    public void accept(CriterionVisitor visitor) {
         visitor.visit(this);
-        return visitor;
     }
 
     @Override
