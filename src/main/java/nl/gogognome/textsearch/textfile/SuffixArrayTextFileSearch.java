@@ -36,7 +36,11 @@ public class SuffixArrayTextFileSearch implements TextFileSearch {
 
     @Override
     public Iterator<String> matchesIterator(Criterion criterion) {
-        return new MatchesIterator(getRangeSetsFor(criterion).iterator());
+        RangeSet rangeSet = new RangeSetBuilder().getRangeSetsFor(criterion);
+        if (rangeSet == null) {
+            throw new IllegalArgumentException("The criterion could not be converted to a range set");
+        }
+        return new MatchesIterator(rangeSet.iterator());
     }
 
     private class MatchesIterator implements Iterator<String> {
@@ -68,30 +72,48 @@ public class SuffixArrayTextFileSearch implements TextFileSearch {
         }
     }
 
-    private RangeSet getRangeSetsFor(Criterion criterion) {
-        Class<? extends Criterion> criterionClass = criterion.getClass();
-        if (criterionClass.equals(StringLiteral.class)) {
-            List<Integer> indexes = suffixArray.indexesOf(((StringLiteral) criterion).getLiteral());
-            RangeSet rangeSet = new RangeSet();
+    private class RangeSetBuilder implements CriterionVisitor {
+
+        private RangeSet rangeSet;
+
+        RangeSet getRangeSet() {
+            return rangeSet;
+        }
+
+        @Override
+        public void visit(And and) {
+            RangeSet leftRangeSet = getRangeSetsFor(and.getLeft());
+            leftRangeSet.retain(getRangeSetsFor(and.getRight()));
+            rangeSet = leftRangeSet;
+        }
+
+        @Override
+        public void visit(Or or) {
+            RangeSet leftRangeSet = getRangeSetsFor(or.getLeft());
+            leftRangeSet.add(getRangeSetsFor(or.getRight()));
+            rangeSet = leftRangeSet;
+        }
+
+        @Override
+        public void visit(Not not) {
+            rangeSet = new RangeSet()
+                    .add(new Range(0, dataLength))
+                    .remove(getRangeSetsFor(not.getCriterion()));
+        }
+
+        @Override
+        public void visit(StringLiteral stringLiteral) {
+            List<Integer> indexes = suffixArray.indexesOf((stringLiteral).getLiteral());
+            rangeSet = new RangeSet();
             for (int index : indexes) {
                 rangeSet.add(new Range(multilineString.getStartOfLine(index), multilineString.getEndOfLineIncludingNewLine(index)));
             }
-            return rangeSet;
-        } else if (criterionClass.equals(And.class)) {
-            And and = (And) criterion;
-            RangeSet rangeSet = getRangeSetsFor(and.getLeft());
-            rangeSet.retain(getRangeSetsFor(and.getRight()));
-            return rangeSet;
-        } else if (criterionClass.equals(Or.class)) {
-            Or or = (Or) criterion;
-            RangeSet rangeSet = getRangeSetsFor(or.getLeft());
-            rangeSet.add(getRangeSetsFor(or.getRight()));
-            return rangeSet;
-        } else if (criterionClass.equals(Not.class)) {
-            Not not = (Not) criterion;
-            return new RangeSet().add(new Range(0, dataLength)).remove(getRangeSetsFor(not.getCriterion()));
         }
-        throw new IllegalArgumentException("Unsupported criterion class found: " + criterion.getClass());
+
+        private RangeSet getRangeSetsFor(Criterion criterion) {
+            criterion.accept(this);
+            return getRangeSet();
+        }
     }
 
     @Override

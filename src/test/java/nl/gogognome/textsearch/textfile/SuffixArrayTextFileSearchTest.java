@@ -86,8 +86,7 @@ public class SuffixArrayTextFileSearchTest {
             fail("Expected exception was not thrown");
         } catch (Exception e) {
             assertEquals(IllegalArgumentException.class, e.getClass());
-            assertTrue("actual message is: " + e.getMessage(),
-                    e.getMessage().contains("Unsupported criterion class found: class nl.gogognome.textsearch.textfile.SuffixArrayTextFileSearchTest"));
+            assertEquals("The criterion could not be converted to a range set", e.getMessage());
         }
     }
 
