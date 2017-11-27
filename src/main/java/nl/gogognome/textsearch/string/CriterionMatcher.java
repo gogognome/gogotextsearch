@@ -1,9 +1,7 @@
 package nl.gogognome.textsearch.string;
 
+import java.util.function.*;
 import nl.gogognome.textsearch.criteria.*;
-
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * <p>This class checks whether a {@link Criterion} matches a specified String.</p>
@@ -143,7 +141,7 @@ public class CriterionMatcher {
 
         @Override
         public boolean matches(String text) {
-            return left.matches(text) && right.matchesAny(text);
+            return left.matches(text) && right.matches(text);
         }
 
         @Override
@@ -164,7 +162,7 @@ public class CriterionMatcher {
 
         @Override
         public boolean matches(String text) {
-            return left.matches(text) || right.matchesAny(text);
+            return left.matches(text) || right.matches(text);
         }
 
         @Override
