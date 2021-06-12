@@ -63,16 +63,15 @@ it is more efficient to use a _suffix array_ than the search string solutions of
 A suffix array is a technique to quickly generate a kind of lookup table for the
 string using very little extra memory. You can use it like this:
 
-    BoyerMoore boyerMoore = new BoyerMoore("Foot", CaseSensitivity.INSENSITIVE);
-    int index = boyerMoore.indexIn("Barefoot is a movie directed by Andrew Flemming.");
+    SuffixArray suffixArray = new SuffixArray("Barefoot is a movie directed by Andrew Flemming.", CaseSensitivity.INSENSITIVE);
+    int index = suffixArray.indexOf("Foot");
     // index == 4
 
 Once you have a `SuffixArray` instance created you can search as often as you want for any search string.
 
 The class `SuffixArray` also offers a method to find all indexes where the pattern occurs in the text.
 
-    new BoyerMoore("re", CaseSensitivity.INSENSITIVE);
-    List<Integer> indexes = boyerMoore.indexesIn("Barefoot is a movie directed by Andrew Flemming.");
+    List<Integer> indexes = suffixArray.indexesOf("re");
     // indexes == [2, 22, 35]
 
 ## Searching with search criterion
